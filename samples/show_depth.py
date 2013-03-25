@@ -4,7 +4,16 @@ import numpy as np
 
 import btceapi
 
-pair = sys.argv[1]
+# If an argument is provided to this script, it will be interpreted
+# as a currency pair for which depth should be displayed. Otherwise
+# the BTC/USD depth will be displayed.
+
+if len(sys.argv) >= 2:
+    pair = sys.argv[1]
+    print "Showing depth for %s" % pair
+else:
+    print "No currency pair provided, defaulting to btc_usd"
+    pair = "btc_usd"
 
 asks, bids = btceapi.getDepth(pair)
 
