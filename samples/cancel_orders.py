@@ -13,17 +13,8 @@ if len(sys.argv) < 4:
     sys.exit(1)
     
 key_file = sys.argv[1]   
-pair = "btc_usd"
-if len(sys.argv) < 3:
-    print "Defaulting to btc_usd"
-else:
-    pair = sys.argv[2]
-    
-order_type = "sell"    
-if len(sys.argv) < 4:
-    print "Defaulting to sell orders"
-else:
-    order_type = unicode(sys.argv[3])
+pair = sys.argv[2]
+order_type = unicode(sys.argv[3])
 
 handler = btceapi.KeyHandler(key_file)
 for key, (secret, nonce) in handler.keys.items():
