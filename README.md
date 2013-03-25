@@ -2,7 +2,10 @@ btce-api
 ========
 
 This library provides a wrapper (hopefully a convenient one) around the public
-and trading APIs of the BTC-e.com exchange site.   
+and trading APIs of the BTC-e.com exchange site.  It depends on the datetime, 
+hashlib, hmac, httplib, json, and urllib standard libraries.  Some of the 
+samples use matplotlib and NumPy, but these are not required to use the library
+itself.
 
 BTC-e is not affiliated with this project; this is a completely independent 
 implementation based on the API description.  Use at your own risk.
@@ -26,7 +29,7 @@ specifies the starting nonce; this is an integer value that is incremented
 on each subsequent API call.  While the TradeAPI object will take care of 
 incrementing this number during its lifetime, it is the user's responsibility 
 to remember this number (retrieved by the next_nonce method) before destroying 
-the TradeAPI object, and providing it to the next TradeAPI instance that uses 
+the TradeAPI object, and to provide it to the next TradeAPI instance that uses 
 the same key/secret.
 
 The following methods are available on a TradeAPI instance:
