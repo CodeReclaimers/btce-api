@@ -117,19 +117,22 @@ class TradeAPI:
         
     def _post(self, params):
         params["nonce"] = self.next_nonce()
-        print params
-        params = urllib.urlencode(params)
+        encoded_params = urllib.urlencode(params)
 
         # Hash the params string to produce the Sign header value
         H = hmac.new(self.secret, digestmod=hashlib.sha512)
-        H.update(params)
+        H.update(encoded_params)
         sign = H.hexdigest()
         
         headers = {"Key":self.key, "Sign":sign}
-        result = common.makeRequest("/tapi", headers, params)
+        result = common.makeRequest("/tapi", headers, encoded_params)
         
         success = result.get(u'success')
         if not success:
+            if "method" in params:
+                raise Exception("%s call failed with error: %s" \
+                    % (params["method"], result.get(u'error')))
+            
             raise Exception("Call failed with error: %s" % result.get(u'error'))
             
         if u'return' not in result:
