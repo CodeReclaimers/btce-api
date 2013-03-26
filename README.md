@@ -10,6 +10,11 @@ itself.
 BTC-e is not affiliated with this project; this is a completely independent 
 implementation based on the API description.  Use at your own risk.
 
+If you find the library useful and would like to donate, please send some coins
+here:
+    LTC LatrKXtfw66LQUURrxBzCE7cxFc9Sv8FWf
+    BTC 16vnh6gwFYLGneBa8JUk7NaXpEt3Qojqs1
+
 The following functions in the btceapi module access the public API, and do
 not require any user account information:
 
@@ -73,4 +78,3 @@ The following methods are available on a TradeAPI instance:
     
 See the API documentation (https://btc-e.com/api/documentation) for more 
 details on arguments to these methods.
-
