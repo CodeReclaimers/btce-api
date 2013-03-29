@@ -12,6 +12,7 @@ implementation based on the API description.  Use at your own risk.
 
 If you find the library useful and would like to donate, please send some coins
 here:
+
     LTC LatrKXtfw66LQUURrxBzCE7cxFc9Sv8FWf
     BTC 16vnh6gwFYLGneBa8JUk7NaXpEt3Qojqs1
 
