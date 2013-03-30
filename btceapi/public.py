@@ -8,7 +8,7 @@ def getDepth(pair):
     
     common.validatePair(pair)
     
-    depth = common.makeRequest("/api/2/%s/depth" % pair)
+    depth = common.makeJSONRequest("/api/2/%s/depth" % pair)
     if type(depth) is not dict:
         raise Exception("The response is not a dict.")
     
@@ -32,7 +32,7 @@ def getTradeHistory(pair):
     
     common.validatePair(pair)
     
-    history = common.makeRequest("/api/2/%s/trades" % pair)
+    history = common.makeJSONRequest("/api/2/%s/trades" % pair)
     
     if type(history) is not list:
         raise Exception("The response is not a list.")

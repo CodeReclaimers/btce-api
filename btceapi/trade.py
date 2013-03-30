@@ -125,7 +125,7 @@ class TradeAPI:
         sign = H.hexdigest()
         
         headers = {"Key":self.key, "Sign":sign}
-        result = common.makeRequest("/tapi", headers, encoded_params)
+        result = common.makeJSONRequest("/tapi", headers, encoded_params)
         
         success = result.get(u'success')
         if not success:

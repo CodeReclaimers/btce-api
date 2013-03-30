@@ -33,6 +33,12 @@ def makeRequest(url, extra_headers = None, params = {}):
     conn = httplib.HTTPSConnection(btce_domain)
     conn.request("POST", url, params, headers)
     response = conn.getresponse().read()
+    conn.close()    
+
+    return response
+              
+def makeJSONRequest(url, extra_headers = None, params = {}):
+    response = makeRequest(url, extra_headers, params)
     
     # Fix up bogus values returned by the API; sometimes floating-point
     # numbers with no fractional value are returned as 1. instead of 1.0, etc.
@@ -41,10 +47,9 @@ def makeRequest(url, extra_headers = None, params = {}):
     try:
         r = json.loads(response)
     except Exception, e:
-        print response
+        print "Error while attempting to parse JSON response: %s" % e
+        print "Response: %r" % response
         raise e
-    
-    conn.close()    
     
     return r
 
