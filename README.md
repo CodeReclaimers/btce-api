@@ -16,8 +16,9 @@ here:
     LTC LatrKXtfw66LQUURrxBzCE7cxFc9Sv8FWf
     BTC 16vnh6gwFYLGneBa8JUk7NaXpEt3Qojqs1
 
-The following functions in the btceapi module access the public API, and do
-not require any user account information:
+The following functions in the btceapi module access the public API and/or 
+scrape content from the main page, and do not require any user account 
+information:
 
     getDepth(pair) - Retrieve the depth for the given pair.  Returns a tuple 
     (asks, bids); each of these is a list of (price, volume) tuples.  See the
@@ -27,6 +28,10 @@ not require any user account information:
     Returns a list of Trade instances.  Each Trade instance has members 
     trade_type (either "bid" or "ask"), price, tid (transaction ID?), amount, 
     and date (a datetime object).
+    
+    getChatMessages() - Retrieve the chat messages currently visible on the 
+    main page.  The messages are returned as a list of tuples: (message ID,
+    user, time, text).
 
 The TradeAPI class in the btceapi module accesses the trading API, and requires
 the key and secret values (found under "API Keys" on the Profile page).  The 
