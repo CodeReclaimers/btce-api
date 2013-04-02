@@ -34,7 +34,7 @@ for key, (secret, nonce) in handler.keys.items():
                 
         if not orders:
             print "  There are no %s %s orders" % (pair, order_type)
-    except Exception, e:
+    except Exception as e:
         print "  An error occurred: %s" % e
         
     # Give the next nonce to the handler so it can update the key file.

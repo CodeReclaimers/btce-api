@@ -25,7 +25,7 @@ for key, (secret, nonce) in handler.keys.items():
                 continue
             
             print "    %s: %r" % (d, getattr(r, d))
-    except Exception, e:
+    except Exception as e:
         print "  An error occurred: %s" % e
         
     # Give the next nonce to the handler so it can update the key file.

@@ -46,7 +46,7 @@ def makeJSONRequest(url, extra_headers = None, params = {}):
     
     try:
         r = json.loads(response)
-    except Exception, e:
+    except Exception as e:
         print "Error while attempting to parse JSON response: %s" % e
         print "Response: %r" % response
         raise e
