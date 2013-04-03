@@ -10,10 +10,14 @@ class BTCEScraper(HTMLParser):
         self.messageTime = None
         self.messageUser = None
         self.messageText = None
-        self.messages = []        
+        self.messages = []    
+        self.bitInstantReserves = None
+        self.aurumXchangeReserves = None
         
         self.inMessageA = False
         self.inMessageSpan = False
+        self.inBitInstantSpan = False
+        self.inAurumXchangeSpan = False
 
     def handle_data(self, data):
         # Capture contents of <a> and <span> tags, which contain
@@ -22,6 +26,10 @@ class BTCEScraper(HTMLParser):
             self.messageUser = data.strip()
         elif self.inMessageSpan:
             self.messageText = data.strip()
+        elif self.inBitInstantSpan:
+            self.bitInstantReserves = int(data)
+        elif self.inAurumXchangeSpan:
+            self.aurumXchangeReserves = int(data)
         
     def handle_starttag(self, tag, attrs):
         if tag == 'p':
@@ -59,8 +67,18 @@ class BTCEScraper(HTMLParser):
             # the handle_data method.
             self.inMessageA = True
             self.messageTime = messageTime
-        elif tag == 'span' and self.messageId is not None:
-            self.inMessageSpan = True
+        elif tag == 'span':
+            if self.messageId is not None:
+                self.inMessageSpan = True
+            else:
+                for k, v in attrs:
+                    if k == 'id':
+                        if v == 'BI_reserve':
+                            self.inBitInstantSpan = True
+                            return
+                        elif v == 'AXC_reserve':
+                            self.inAurumXchangeSpan = True
+                            return
 
     def handle_endtag(self, tag):
         if tag == 'p' and self.messageId is not None:
@@ -91,12 +109,28 @@ class BTCEScraper(HTMLParser):
             self.messageText = None            
         elif tag == 'a' and self.messageId is not None:
             self.inMessageA = False
-        elif tag == 'span' and self.messageId is not None:
-            self.inMessageSpan = False
+        elif tag == 'span':
+            if self.messageId is not None:
+                self.inMessageSpan = False
+           
+            if self.inBitInstantSpan:
+                self.inBitInstantSpan = False
+                
+            if self.inAurumXchangeSpan:
+                self.inAurumXchangeSpan = False
 
-
-def getChatMessages():            
+class ScraperResults:   
+    __slots__ = ('messages', 'bitInstantReserves', 'aurumXchangeReserves')
+        
+                
+def scrapeMainPage():            
     parser = BTCEScraper()
     parser.feed(makeRequest('/'))
     parser.close()
-    return parser.messages
+    
+    r = ScraperResults()
+    r.messages = parser.messages
+    r.bitInstantReserves = parser.bitInstantReserves
+    r.aurumXchangeReserves = parser.aurumXchangeReserves
+    
+    return r
