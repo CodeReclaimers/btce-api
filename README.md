@@ -32,9 +32,12 @@ information:
     trade_type (either "bid" or "ask"), price, tid (transaction ID?), amount, 
     and date (a datetime object).
     
-    getChatMessages() - Retrieve the chat messages currently visible on the 
-    main page.  The messages are returned as a list of tuples: (message ID,
-    user, time, text).
+    scrapeMainPage() - Collect information from the main page and return it in
+    a ScraperResults object.  This object has members 'messages' (a list of 
+    (message ID, user, time, text) tuples representing the chat messages 
+    currently visible on the main page, 'bitInstantReserves' (an integer value
+    representing the current BitInstant reserves), and 'aurumXchangeReserves'
+    (an integer value representing the current AurumXchange reserves).
 
 The TradeAPI class in the btceapi module accesses the trading API, and requires
 the key and secret values (found under "API Keys" on the Profile page).  The 
