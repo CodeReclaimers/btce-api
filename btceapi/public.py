@@ -35,7 +35,7 @@ def getTradeHistory(pair):
     history = common.makeJSONRequest("/api/2/%s/trades" % pair)
     
     if type(history) is not list:
-        raise Exception("The response is not a list.")
+        raise Exception("The response is a %r, not a list." % type(history))
         
     result = []
     for h in history:
