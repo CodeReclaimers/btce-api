@@ -3,23 +3,26 @@ import json
 
 btce_domain = "btc-e.com"
 
-all_currencies = ("btc", "usd", "rur", "ltc", "nmc", "eur", "nvc", "trc", "ppc")  
-all_pairs = ("btc_usd", "btc_rur", "ltc_btc", "ltc_usd", "ltc_rur",
-             "nmc_btc", "usd_rur", "eur_usd", "nvc_btc", "trc_btc",
-             "ppc_btc")
+all_currencies = ("btc", "usd", "rur", "ltc", "nmc", "eur", "nvc", 
+                  "trc", "ppc")  
+all_pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd", 
+             "ltc_rur", "nmc_btc", "usd_rur", "eur_usd", "nvc_btc", 
+             "trc_btc", "ppc_btc")
 max_digits = {"btc_usd":3,
               "btc_rur":4,
+              "btc_eur":5,
               "ltc_btc":5, 
               "ltc_usd":6,
-              "ltc_rur":4,
-              "nmc_btc":4,
-              "usd_rur":4,
-              "eur_usd":4, 
-              "nvc_btc":4,
-              "trc_btc":4,
-              "ppc_btc":4}
+              "ltc_rur":5,
+              "nmc_btc":5,
+              "usd_rur":5,
+              "eur_usd":5, 
+              "nvc_btc":5,
+              "trc_btc":5,
+              "ppc_btc":5}
 min_orders = {"btc_usd":0.1,
               "btc_rur":0.1,
+              "btc_eur":0.1,
               "ltc_btc":0.1, 
               "ltc_usd":0.1,
               "ltc_rur":0.1,
