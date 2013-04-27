@@ -1,5 +1,9 @@
 import httplib
 import json
+import decimal
+
+decimal.getcontext().rounding = decimal.ROUND_DOWN
+exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 
 btce_domain = "btc-e.com"
 
@@ -72,10 +76,7 @@ def validatePair(pair):
         raise Exception("Unrecognized pair: %r" % pair)
         
 def formatCurrency(value, maxdigits):
-    s = round(value, maxdigits)
-    s = "%.8f" % value
-    s = s[:s.index(".")+maxdigits+1]
-    
+    s = str(decimal.Decimal(value).quantize(exps[maxdigits]))
     while s[-1] == "0":
         s = s[:-1]
         
