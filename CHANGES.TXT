@@ -1,0 +1,24 @@
+Changes in 0.2:
+  - There have been several API changes (detailed below), but hopefully this
+    version will not break your code too much.  I've tried to stick to issuing
+    warnings where breakage may occur in later versions.
+  - Switched to decimal.Decimal for currency handling to avoid rounding issues.
+    This is the one change that is most likely to break your code.
+  - The TradeAPI now takes an optional handler, which should be a KeyHandler
+    instance (or equivalent).  This allows the TradeAPI object to automatically
+    update the nonce held by the KeyHandler. In future versions, this argument 
+    will be required, and the secret argument will be removed, as the handler
+    can provide this information.
+  - The KeyHandler constructor now takes an optional resaveOnDeletion argument,
+    and this class will automatically rewrite nonces back into the key file on
+    deletion if this flag is true.
+  - The all_currencies, all_pairs, max_digits, and min_orders variables in 
+    common are now available at the top level of the library.
+  - Switched all classes to be new-style (I wanted to make the KeyHandler keys
+    member a property for backwards compatibility, and the property decorator
+    works best with new-style classes, so this is mainly for consistency).
+  - Added a new sample showing suggested 0.2 usage.  The old sample remains
+    for now.
+  - Changed common.formatCurrency to take a pair instead of maxdigits so you
+    no longer have to do that lookup yourself.
+  - Added more tests.    

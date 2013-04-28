@@ -6,6 +6,10 @@ import random
 
 import btceapi
 
+#NOTE: This is the original version of this script; it still runs with
+#version 0.2 of the API, but will produce lots of warnings.  Please 
+#see print-account-info-0.2.py to see recommended usage for that version.
+
 if len(sys.argv) < 2:
     print "Usage: print_account_info.py <key file>"
     print "    key file - Path to a file containing key/secret/nonce data"

@@ -2,19 +2,22 @@ btce-api
 ========
 
 This library provides a wrapper (hopefully a convenient one) around the public
-and trading APIs of the BTC-e.com exchange site.  It depends only on the 
-following standard Python libraries: 
+and trading APIs of the BTC-e.com exchange site.  So that you don't have to 
+spend your time chasing down wacky dependencies, it depends only on the
+following standard libraries that are "batteries included" with a Python 2.7
+installation: 
 
     datetime, hashlib, hmac, HTMLParser, httplib, json, urllib, warnings
 
-Some of the samples use matplotlib and NumPy, but these are not required to use
-the library itself.
+Some of the samples use matplotlib and NumPy, and the tests use unittest
+(although I find it easier to run them with nose), but these are not used 
+in the library itself.
 
 NOTE: BTC-e is not affiliated with this project; this is a completely independent 
 implementation based on the API description.  Use at your own risk.
 
-If you find the library useful and would like to donate, please send some coins
-here:
+If you find the library useful and would like to donate (and many thanks to 
+those that have donated!), please send some coins here:
 
     LTC LatrKXtfw66LQUURrxBzCE7cxFc9Sv8FWf
     BTC 16vnh6gwFYLGneBa8JUk7NaXpEt3Qojqs1

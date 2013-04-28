@@ -1,11 +1,12 @@
 import urllib
 import hashlib
 import hmac
+import warnings
 from datetime import datetime
 
 import common
 
-class TradeAccountInfo:
+class TradeAccountInfo(object):
     '''An instance of this class will be returned by 
     a successful call to TradeAPI.getInfo.'''
     
@@ -24,7 +25,7 @@ class TradeAccountInfo:
         self.trade_rights = (rights.get(u'trade') == 1)   
             
 
-class TransactionHistoryItem:
+class TransactionHistoryItem(object):
     '''A list of instances of this class will be returned by 
     a successful call to TradeAPI.transHistory.'''
     
@@ -37,7 +38,7 @@ class TransactionHistoryItem:
         self.timestamp = datetime.fromtimestamp(self.timestamp)
 
         
-class TradeHistoryItem:
+class TradeHistoryItem(object):
     '''A list of instances of this class will be returned by 
     a successful call to TradeAPI.tradeHistory.'''
     
@@ -50,18 +51,18 @@ class TradeHistoryItem:
         self.timestamp = datetime.fromtimestamp(self.timestamp)
 
         
-class OrderItem:
+class OrderItem(object):
     '''A list of instances of this class will be returned by 
     a successful call to TradeAPI.orderList.'''
     
     def __init__(self, order_id, info):
-        self.order_id = order_id
+        self.order_id = int(order_id)
         for n in ("pair", "type", "amount", "rate", "timestamp_created", "status"):
             setattr(self, n, info.get(n))
         self.timestamp_created = datetime.fromtimestamp(self.timestamp_created)
 
         
-class TradeResult:
+class TradeResult(object):
     '''An instance of this class will be returned by 
     a successful call to TradeAPI.trade.'''
     
@@ -74,7 +75,7 @@ class TradeResult:
             setattr(self, "balance_%s" % c, funds.get(unicode(c), 0))
             
    
-class CancelOrderResult:
+class CancelOrderResult(object):
     '''An instance of this class will be returned by 
     a successful call to TradeAPI.cancelOrder.'''
     
@@ -104,13 +105,24 @@ def setHistoryParams(params, from_number, count_number, from_id, end_id,
     if end is not None:
         params["end"] = "%d" % end
             
-class TradeAPI:    
-    def __init__(self, key, secret, nonce = 1):
+class TradeAPI(object):    
+    def __init__(self, key, secret = None, nonce = 1, handler=None):
         self.key = key
-        self.secret = secret
-        self.nonce = nonce
-       
+        self.handler = handler
+
+        if self.handler is None:
+            warnings.warn("Using TradeAPI without a key handler will be deprecated soon.")
+            self.secret = secret
+            self.nonce = nonce
+        else:
+            # When a handler is given, use it to obtain the secret.
+            self.secret = handler.getSecret(key)
+                
     def next_nonce(self):
+        # If the handler is available, use that for 
+        if self.handler is not None:
+            return self.handler.getNextNonce(self.key)
+            
         n = self.nonce
         self.nonce += 1
         return n
@@ -209,13 +221,11 @@ class TradeAPI:
         if trade_type not in ("buy", "sell"):
             raise Exception("Unrecognized trade type: %r" % trade_type)
        
-        maxdigits = common.max_digits.get(pair)
-        
         params = {"method":"Trade",
                   "pair":pair,
                   "type":trade_type,
-                  "rate":common.formatCurrency(rate, maxdigits),
-                  "amount":common.formatCurrency(amount, maxdigits)}
+                  "rate":common.formatCurrency(rate, pair),
+                  "amount":common.formatCurrency(amount, pair)}
         
         return TradeResult(self._post(params))
         
