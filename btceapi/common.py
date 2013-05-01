@@ -3,7 +3,6 @@ import json
 import decimal
 
 decimal.getcontext().rounding = decimal.ROUND_DOWN
-decimal.getcontext().prec = 8
 exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 
 btce_domain = "btc-e.com"
@@ -83,15 +82,21 @@ def validatePair(pair):
                 raise Exception(msg)
         raise Exception("Unrecognized pair: %r" % pair)
 
-def truncateAmount(value, pair):
-    digits = max_digits[pair]
+def truncateAmount(value, digits):
     quantum = exps[digits]
     return decimal.Decimal(value).quantize(quantum)
         
-def formatCurrency(value, pair):
-    s = str(truncateAmount(value, pair))
-    while s[-1] == "0":
+def truncateAmountByPair(value, pair):
+    return truncateAmount(value, max_digits[pair])
+
+def formatCurrency(value, digits):
+    s = str(truncateAmount(value, digits))
+    dot = s.index(".")
+    while s[-1] == "0" and len(s) > dot + 2:
         s = s[:-1]
         
     return s
+
+def formatCurrencyByPair(value, pair):
+    return formatCurrency(value, max_digits[pair])
 
