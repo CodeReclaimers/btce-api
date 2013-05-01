@@ -82,21 +82,21 @@ def validatePair(pair):
                 raise Exception(msg)
         raise Exception("Unrecognized pair: %r" % pair)
 
-def truncateAmount(value, digits):
+def truncateAmountDigits(value, digits):
     quantum = exps[digits]
     return decimal.Decimal(value).quantize(quantum)
         
-def truncateAmountByPair(value, pair):
-    return truncateAmount(value, max_digits[pair])
+def truncateAmount(value, pair):
+    return truncateAmountDigits(value, max_digits[pair])
 
-def formatCurrency(value, digits):
-    s = str(truncateAmount(value, digits))
+def formatCurrencyDigits(value, digits):
+    s = str(truncateAmountDigits(value, digits))
     dot = s.index(".")
     while s[-1] == "0" and len(s) > dot + 2:
         s = s[:-1]
         
     return s
 
-def formatCurrencyByPair(value, pair):
-    return formatCurrency(value, max_digits[pair])
+def formatCurrency(value, pair):
+    return formatCurrencyDigits(value, max_digits[pair])
 
