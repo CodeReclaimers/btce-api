@@ -1,3 +1,5 @@
+# Copyright (c) 2013 Alan McIntyre
+
 from public import getDepth, getTradeHistory
 from trade import TradeAPI
 from scraping import scrapeMainPage

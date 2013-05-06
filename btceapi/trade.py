@@ -1,3 +1,5 @@
+# Copyright (c) 2013 Alan McIntyre
+
 import urllib
 import hashlib
 import hmac

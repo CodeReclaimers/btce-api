@@ -1,3 +1,5 @@
+# Copyright (c) 2013 Alan McIntyre
+
 from HTMLParser import HTMLParser
 import datetime
 import warnings
