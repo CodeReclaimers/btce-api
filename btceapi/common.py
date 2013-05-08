@@ -73,7 +73,6 @@ def parseJSONResponse(response):
                             
 def makeJSONRequest(url, extra_headers = None, params = {}):
     response = makeRequest(url, extra_headers, params)
-    
     return parseJSONResponse(response)
 
 def validatePair(pair):
