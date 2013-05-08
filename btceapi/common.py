@@ -58,11 +58,12 @@ def makeRequest(url, extra_headers = None, params = {}):
     return response
               
 def parseJSONResponse(response):
-    def parse_float(var):
+    def parse_decimal(var):
         return decimal.Decimal(var)
 
     try:
-        r = json.loads(response, parse_float=parse_float)
+        r = json.loads(response, parse_float=parse_decimal,
+                       parse_int=parse_decimal)
     except Exception as e:
         print "Error while attempting to parse JSON response: %s" % e
         print "Response: %r" % response
@@ -74,9 +75,6 @@ def makeJSONRequest(url, extra_headers = None, params = {}):
     response = makeRequest(url, extra_headers, params)
     
     return parseJSONResponse(response)
-    # Fix up bogus values returned by the API; sometimes floating-point
-    # numbers with no fractional value are returned as 1. instead of 1.0, etc.
-    #response = response.replace(".,", ".0,")
 
 def validatePair(pair):
     if pair not in all_pairs:
