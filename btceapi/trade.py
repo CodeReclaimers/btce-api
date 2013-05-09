@@ -159,19 +159,25 @@ class TradeAPI(object):
         return TradeAccountInfo(self._post(params))
         
     def transHistory(self, from_number = None, count_number = None,
-                  from_id = None, end_id = None, order = None,
+                  from_id = None, end_id = None, order = "DESC",
                   since = None, end = None):
 
-        params = {"method":"TradeHistory"}
-        
+        params = {"method":"TransHistory"}
+
         setHistoryParams(params, from_number, count_number, from_id, end_id,
             order, since, end)
-            
+
         orders = self._post(params)
         result = []
         for k, v in orders.items():
-            result.append(TransactionHistoryItem(k, v))
-            
+            result.append(TransactionHistoryItem(int(k), v))
+
+        # We have to sort items here because the API returns a dict
+        if "ASC" == order:
+            result.sort(key=lambda a: a.transaction_id, reverse=False)
+        elif "DESC" == order:
+            result.sort(key=lambda a: a.transaction_id, reverse=True)
+
         return result        
         
     def tradeHistory(self, from_number = None, count_number = None,
