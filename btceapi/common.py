@@ -65,9 +65,8 @@ def parseJSONResponse(response):
         r = json.loads(response, parse_float=parse_decimal,
                        parse_int=parse_decimal)
     except Exception as e:
-        print "Error while attempting to parse JSON response: %s" % e
-        print "Response: %r" % response
-        raise e
+        msg = "Error while attempting to parse JSON response: %s\nResponse:\n%r" % (e, response)
+        raise Exception(msg)
     
     return r
                             

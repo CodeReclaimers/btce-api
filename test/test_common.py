@@ -38,6 +38,23 @@ class TestCommon(unittest.TestCase):
         for pair in all_pairs:
             validatePair(pair)
         self.assertRaises(Exception, validatePair, "not_a_real_pair")
+
+    def test_parseJSONResponse(self):
+        json1 = """
+                {"asks":[[3.29551,0.5],[3.29584,5]],
+                "bids":[[3.29518,15.51461],[3,27.5]]}
+                """
+        parsed = parseJSONResponse(json1)
+        asks = parsed.get("asks")
+        self.assertEqual(asks[0], [decimal.Decimal("3.29551"),
+                                   decimal.Decimal("0.5")])
+        self.assertEqual(asks[1], [decimal.Decimal("3.29584"),
+                                   decimal.Decimal("5")])
+        bids = parsed.get("bids")        
+        self.assertEqual(bids[0], [decimal.Decimal("3.29518"),
+                                   decimal.Decimal("15.51461")])
+        self.assertEqual(bids[1], [decimal.Decimal("3"),
+                                   decimal.Decimal("27.5")])
         
 if __name__ == '__main__':
     unittest.main()        
