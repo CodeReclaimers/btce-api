@@ -1,6 +1,7 @@
 # Copyright (c) 2013 Alan McIntyre
 
 import datetime
+import decimal
 
 import common
 
@@ -33,10 +34,13 @@ class Trade(object):
             u = unicode(s)
             setattr(self, s, kwargs.get(s))
         
-        if type(self.date) in (int, float):
+        if type(self.date) in (int, float, decimal.Decimal):
             self.date = datetime.datetime.fromtimestamp(self.date)
         elif type(self.date) in (str, unicode):
-            self.date = datetime.datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S")
+            if "." in self.date:
+                self.date = datetime.datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S.%f")
+            else:
+                self.date = datetime.datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S")
     
 def getTradeHistory(pair):
     '''Retrieve the trade history for the given pair.  Returns a list of 
@@ -51,8 +55,8 @@ def getTradeHistory(pair):
         
     result = []
     for h in history:
+        h["pair"] = pair
         t = Trade(**h)
-        t.pair = pair
         result.append(t)
     return result
     

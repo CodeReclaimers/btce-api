@@ -7,7 +7,7 @@ spend your time chasing down wacky dependencies, it depends only on the
 following standard libraries that are "batteries included" with a Python 2.7
 installation: 
 
-    datetime, hashlib, hmac, HTMLParser, httplib, json, urllib, warnings
+    datetime, decimal, hashlib, hmac, HTMLParser, httplib, json, urllib, warnings
 
 Some of the samples use matplotlib and NumPy, and the tests use unittest
 (although I find it easier to run them with nose), but these are not used 
