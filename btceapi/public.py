@@ -52,6 +52,7 @@ def getTradeHistory(pair):
     result = []
     for h in history:
         t = Trade(**h)
+        t.pair = pair
         result.append(t)
     return result
     
