@@ -28,6 +28,16 @@ def getDepth(pair):
 class Trade(object):
     __slots__ = ('pair', 'trade_type', 'price', 'tid', 'amount', 'date')
     
+    def __init__(self, **kwargs):
+        for s in Trade.__slots__:
+            u = unicode(s)
+            setattr(self, s, kwargs.get(s))
+        
+        if type(self.date) in (int, float):
+            self.date = datetime.datetime.fromtimestamp(self.date)
+        elif type(self.date) in (str, unicode):
+            self.date = datetime.datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S")
+    
 def getTradeHistory(pair):
     '''Retrieve the trade history for the given pair.  Returns a list of 
     Trade instances.'''
@@ -41,12 +51,7 @@ def getTradeHistory(pair):
         
     result = []
     for h in history:
-        t = Trade()
-        for s in Trade.__slots__:
-            u = unicode(s)
-            setattr(t, u, h.get(u))
-        t.date = datetime.datetime.fromtimestamp(t.date)
-        t.pair = pair
+        t = Trade(**h)
         result.append(t)
     return result
     
