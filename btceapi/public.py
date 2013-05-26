@@ -5,13 +5,16 @@ import decimal
 
 import common
 
-def getDepth(pair):
+def getDepth(pair, connection = None):
     '''Retrieve the depth for the given pair.  Returns a tuple (asks, bids);
     each of these is a list of (price, volume) tuples.'''
     
     common.validatePair(pair)
     
-    depth = common.makeJSONRequest("/api/2/%s/depth" % pair)
+    if connection is None:
+        connection = common.BTCEConnection()
+    
+    depth = connection.makeJSONRequest("/api/2/%s/depth" % pair)
     if type(depth) is not dict:
         raise Exception("The response is not a dict.")
     
@@ -42,13 +45,16 @@ class Trade(object):
             else:
                 self.date = datetime.datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S")
     
-def getTradeHistory(pair):
+def getTradeHistory(pair, connection = None):
     '''Retrieve the trade history for the given pair.  Returns a list of 
     Trade instances.'''
     
     common.validatePair(pair)
     
-    history = common.makeJSONRequest("/api/2/%s/trades" % pair)
+    if connection is None:
+        connection = common.BTCEConnection()
+    
+    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
     
     if type(history) is not list:
         raise Exception("The response is a %r, not a list." % type(history))

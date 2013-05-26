@@ -3,7 +3,7 @@
 from HTMLParser import HTMLParser
 import datetime
 import warnings
-from common import makeRequest
+from common import BTCEConnection
 
 class BTCEScraper(HTMLParser):
     def __init__(self):
@@ -125,7 +125,10 @@ class ScraperResults:
     __slots__ = ('messages', 'bitInstantReserves', 'aurumXchangeReserves')
         
                 
-def scrapeMainPage():            
+def scrapeMainPage(connection = None):
+    if connection is None:
+        connection = common.BTCEConnection()
+    
     parser = BTCEScraper()
     parser.feed(makeRequest('/'))
     parser.close()

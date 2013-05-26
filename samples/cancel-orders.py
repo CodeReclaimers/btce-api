@@ -17,10 +17,10 @@ pair = sys.argv[2]
 order_type = unicode(sys.argv[3])
 
 handler = btceapi.KeyHandler(key_file)
-for key, (secret, nonce) in handler.keys.items():
+for key in handler.keys:
     print "Canceling orders for key %s" % key
     
-    t = btceapi.TradeAPI(key, secret, nonce)
+    t = btceapi.TradeAPI(key, handler)
 
     try:
         # Get a list of orders for the given pair, and cancel the ones
@@ -36,8 +36,3 @@ for key, (secret, nonce) in handler.keys.items():
             print "  There are no %s %s orders" % (pair, order_type)
     except Exception as e:
         print "  An error occurred: %s" % e
-        
-    # Give the next nonce to the handler so it can update the key file.
-    handler.setNextNonce(key, t.next_nonce())
-    
-handler.save(key_file)    

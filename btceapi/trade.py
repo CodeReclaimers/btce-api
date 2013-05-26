@@ -7,6 +7,17 @@ import warnings
 from datetime import datetime
 
 import common
+import keyhandler
+
+class InvalidNonceException(Exception):
+    def __init__(self, method, expectedNonce, actualNonce):
+        self.method = method
+        self.expectedNonce = expectedNonce
+        self.actualNonce = actualNonce
+
+    def __str__(self):
+        return "Expected a nonce greater than %d" % self.expectedNonce
+
 
 class TradeAccountInfo(object):
     '''An instance of this class will be returned by 
@@ -108,29 +119,18 @@ def setHistoryParams(params, from_number, count_number, from_id, end_id,
         params["end"] = "%d" % end
             
 class TradeAPI(object):    
-    def __init__(self, key, secret = None, nonce = 1, handler=None):
+    def __init__(self, key, handler, secret = None, nonce = 1):
         self.key = key
         self.handler = handler
 
-        if self.handler is None:
-            warnings.warn("Using TradeAPI without a key handler will be deprecated soon.")
-            self.secret = secret
-            self.nonce = nonce
-        else:
-            # When a handler is given, use it to obtain the secret.
-            self.secret = handler.getSecret(key)
+        if type(self.handler) is not keyhandler.KeyHandler:
+            raise Exception("The handler argument must be a keyhandler.KeyHandler")
+
+        # We depend on the key handler for the secret
+        self.secret = handler.getSecret(key)
                 
-    def next_nonce(self):
-        # If the handler is available, use that for 
-        if self.handler is not None:
-            return self.handler.getNextNonce(self.key)
-            
-        n = self.nonce
-        self.nonce += 1
-        return n
-        
-    def _post(self, params):
-        params["nonce"] = self.next_nonce()
+    def _post(self, params, connection = None, raiseIfInvalidNonce = False):
+        params["nonce"] = self.handler.getNextNonce(self.key)
         encoded_params = urllib.urlencode(params)
 
         # Hash the params string to produce the Sign header value
@@ -138,36 +138,54 @@ class TradeAPI(object):
         H.update(encoded_params)
         sign = H.hexdigest()
         
+        if connection is None:
+            connection = common.BTCEConnection()
+        
         headers = {"Key":self.key, "Sign":sign}
-        result = common.makeJSONRequest("/tapi", headers, encoded_params)
+        result = connection.makeJSONRequest("/tapi", headers, encoded_params)
         
         success = result.get(u'success')
         if not success:
-            if "method" in params:
-                raise Exception("%s call failed with error: %s" \
-                    % (params["method"], result.get(u'error')))
+            err_message = result.get(u'error')
+            method = params.get("method", "[uknown method]")
             
-            raise Exception("Call failed with error: %s" % result.get(u'error'))
+            if "invalid nonce" in err_message:
+                # If the nonce is out of sync, make one attempt to update to the
+                # correct nonce.  This sometimes happens if a bot crashes and the
+                # nonce file doesn't get saved, so it's reasonable to attempt one
+                # correction.  If multiple threads/processes are attempting to use
+                # the same key, this mechanism will eventually fail and the InvalidNonce
+                # will be emitted so that you'll end up here reading this comment. :)
+                expected, actual = map(int, err_message.split()[-2:])
+                if raiseIfInvalidNonce:
+                    raise InvalidNonceException(method, expected, actual)
+                    
+                warnings.warn("The nonce in the key file is out of date; attempting to correct.")
+                self.handler.setNextNonce(self.key, expected+1)
+                return self._post(params, connection, True)
+            
+            raise Exception("%s call failed with error: %s" \
+                % (method, err_message))
             
         if u'return' not in result:
             raise Exception("Response does not contain a 'return' item.")
             
         return result.get(u'return')        
         
-    def getInfo(self):
+    def getInfo(self, connection = None):
         params = {"method":"getInfo"}
-        return TradeAccountInfo(self._post(params))
+        return TradeAccountInfo(self._post(params, connection))
         
     def transHistory(self, from_number = None, count_number = None,
                   from_id = None, end_id = None, order = "DESC",
-                  since = None, end = None):
+                  since = None, end = None, connection = None):
 
         params = {"method":"TransHistory"}
 
         setHistoryParams(params, from_number, count_number, from_id, end_id,
             order, since, end)
 
-        orders = self._post(params)
+        orders = self._post(params, connection)
         result = []
         for k, v in orders.items():
             result.append(TransactionHistoryItem(int(k), v))
@@ -182,7 +200,7 @@ class TradeAPI(object):
         
     def tradeHistory(self, from_number = None, count_number = None,
                   from_id = None, end_id = None, order = None,
-                  since = None, end = None, pair = None):
+                  since = None, end = None, pair = None, connection = None):
 
         params = {"method":"TradeHistory"}
         
@@ -193,7 +211,7 @@ class TradeAPI(object):
             common.validatePair(pair)
             params["pair"] = pair
 
-        orders = self._post(params)
+        orders = self._post(params, connection)
         result = []
         for k, v in orders.items():
             result.append(TradeHistoryItem(k, v))
@@ -202,7 +220,8 @@ class TradeAPI(object):
         
     def orderList(self, from_number = None, count_number = None,
                   from_id = None, end_id = None, order = None,
-                  since = None, end = None, pair = None, active = None):
+                  since = None, end = None, pair = None, active = None,
+                  connection = None):
 
         params = {"method":"OrderList"}
 
@@ -217,14 +236,14 @@ class TradeAPI(object):
                 raise Exception("Unexpected active parameter: %r" % active)
             params["active"] = int(active)
 
-        orders = self._post(params)
+        orders = self._post(params, connection)
         result = []
         for k, v in orders.items():
             result.append(OrderItem(k, v))
             
         return result
            
-    def trade(self, pair, trade_type, rate, amount):
+    def trade(self, pair, trade_type, rate, amount, connection = None):
         common.validatePair(pair)
         if trade_type not in ("buy", "sell"):
             raise Exception("Unrecognized trade type: %r" % trade_type)
@@ -235,12 +254,12 @@ class TradeAPI(object):
                   "rate":common.formatCurrency(rate, pair),
                   "amount":common.formatCurrency(amount, pair)}
         
-        return TradeResult(self._post(params))
+        return TradeResult(self._post(params, connection))
         
-    def cancelOrder(self, order_id):
+    def cancelOrder(self, order_id, connection = None):
         params = {"method":"CancelOrder", 
                   "order_id":order_id}
-        return CancelOrderResult(self._post(params))
+        return CancelOrderResult(self._post(params, connection))
         
         
         

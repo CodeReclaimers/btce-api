@@ -1,23 +1,24 @@
+#!/usr/bin/python
 import sys
 
 import btceapi
 
 if len(sys.argv) < 2:
-    print "Usage: print-account-info-0.2.py <key file>"
+    print "Usage: print-account-info.py <key file>"
     print "    key file - Path to a file containing key/secret/nonce data"
     sys.exit(1)
     
 key_file = sys.argv[1]   
-# NOTE: In future versions, resaveOnDeletion will default to True.
 handler = btceapi.KeyHandler(key_file, resaveOnDeletion=True)
 for key in handler.getKeys():
     print "Printing info for key %s" % key
 
     # NOTE: In future versions, the handler argument will be required.
+    conn = btceapi.BTCEConnection()
     t = btceapi.TradeAPI(key, handler=handler)
 
     try:
-        r = t.getInfo()
+        r = t.getInfo(connection = conn)
             
         for currency in btceapi.all_currencies:
             balance = getattr(r, "balance_" + currency)
@@ -29,7 +30,7 @@ for key in handler.getKeys():
         print "\tItems in transaction history: %r" % r.transaction_count
         print "\tNumber of open orders: %r" % r.open_orders
         print "\topen orders:"
-        orders = t.orderList()
+        orders = t.orderList(connection = conn)
         for o in orders:
             print "\t\torder id: %r" % o.order_id
             print "\t\t    type: %s" % o.type
@@ -42,4 +43,5 @@ for key in handler.getKeys():
             
     except Exception as e:
         print "  An error occurred: %s" % e
+        raise e
         

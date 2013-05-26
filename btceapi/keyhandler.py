@@ -11,7 +11,7 @@ class KeyHandler(object):
     '''KeyHandler handles the tedious task of managing nonces associated
     with a BTC-e API key/secret pair.
     The getNextNonce method is threadsafe, all others are not.'''
-    def __init__(self, filename = None, resaveOnDeletion = False):
+    def __init__(self, filename = None, resaveOnDeletion = True):
         '''The given file is assumed to be a text file with three lines
         (key, secret, nonce) per entry.'''
         if not resaveOnDeletion:
@@ -36,8 +36,7 @@ class KeyHandler(object):
             
     @property
     def keys(self):
-        warnings.warn("The keys property will return a list of keys instead of a dict in the future.")
-        return dict(((k, (d.secret, d.nonce)) for k, d in self._keys.items()))
+        return self._keys.keys()
         
     def getKeys(self):
         return self._keys.keys()
@@ -68,7 +67,6 @@ class KeyHandler(object):
         return data.secret
         
     def setNextNonce(self, key, next_nonce):
-        warnings.warn("This method may be removed in a future version.")
         data = self._keys.get(key)
         if data is None:
             raise Exception("Key not found: %r" % key)

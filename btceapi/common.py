@@ -45,18 +45,6 @@ min_orders = {"btc_usd":decimal.Decimal("0.1"),
               "ftc_btc":decimal.Decimal("0.1"),
               "cnc_btc":decimal.Decimal("0.1")}
 
-def makeRequest(url, extra_headers = None, params = {}):
-    headers = {"Content-type": "application/x-www-form-urlencoded"}
-    if extra_headers is not None:
-        headers.update(extra_headers)
-        
-    conn = httplib.HTTPSConnection(btce_domain)
-    conn.request("POST", url, params, headers)
-    response = conn.getresponse().read()
-    conn.close()    
-
-    return response
-              
 def parseJSONResponse(response):
     def parse_decimal(var):
         return decimal.Decimal(var)
@@ -69,11 +57,30 @@ def parseJSONResponse(response):
         raise Exception(msg)
     
     return r
-                            
-def makeJSONRequest(url, extra_headers = None, params = {}):
-    response = makeRequest(url, extra_headers, params)
-    return parseJSONResponse(response)
 
+
+class BTCEConnection:
+    def __init__(self, timeout=30):
+        self.conn = httplib.HTTPSConnection(btce_domain, timeout=timeout)
+        
+    def close(self):
+        self.conn.close()
+        
+    def makeRequest(self, url, extra_headers = None, params = ""):
+        headers = {"Content-type": "application/x-www-form-urlencoded"}
+        if extra_headers is not None:
+            headers.update(extra_headers)
+            
+        self.conn.request("POST", url, params, headers)
+        response = self.conn.getresponse().read()
+    
+        return response
+                                
+    def makeJSONRequest(self, url, extra_headers = None, params = ""):
+        response = self.makeRequest(url, extra_headers, params)
+        return parseJSONResponse(response)
+    
+        
 def validatePair(pair):
     if pair not in all_pairs:
         if "_" in pair:

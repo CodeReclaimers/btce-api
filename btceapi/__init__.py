@@ -6,4 +6,5 @@ from scraping import scrapeMainPage
 from keyhandler import KeyHandler
 from common import all_currencies, all_pairs, max_digits, min_orders,\
                    formatCurrency, formatCurrencyDigits, \
-                   truncateAmount, truncateAmountDigits
+                   truncateAmount, truncateAmountDigits, \
+                   BTCEConnection
