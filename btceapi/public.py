@@ -45,9 +45,11 @@ class Trade(object):
             else:
                 self.date = datetime.datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S")
     
-def getTradeHistory(pair, connection = None):
+def getTradeHistory(pair, connection = None, count = None):
     '''Retrieve the trade history for the given pair.  Returns a list of 
-    Trade instances.'''
+    Trade instances.  If count is not None, it should be an integer, and
+    specifies the number of items from the trade history that will be
+    processed and returned.'''
     
     common.validatePair(pair)
     
@@ -60,6 +62,11 @@ def getTradeHistory(pair, connection = None):
         raise Exception("The response is a %r, not a list." % type(history))
         
     result = []
+    
+    # Limit the number of items returned if requested.
+    if count is not None:
+        history = history[:count]
+        
     for h in history:
         h["pair"] = pair
         t = Trade(**h)
