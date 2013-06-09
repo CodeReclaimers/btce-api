@@ -3,7 +3,7 @@
 from HTMLParser import HTMLParser
 import datetime
 import warnings
-from common import BTCEConnection
+from common import BTCEConnection, all_pairs
 
 class BTCEScraper(HTMLParser):
     def __init__(self):
@@ -124,13 +124,22 @@ class BTCEScraper(HTMLParser):
 class ScraperResults:   
     __slots__ = ('messages', 'bitInstantReserves', 'aurumXchangeReserves')
         
-                
+
+_current_pair_index = 0
+
 def scrapeMainPage(connection = None):
     if connection is None:
         connection = BTCEConnection()
     
     parser = BTCEScraper()
-    parser.feed(connection.makeRequest('/'))
+
+    # Rotate through the currency pairs between chat requests so that the
+    # chat pane contents will update more often than every few minutes.  
+    global _current_pair_index
+    _current_pair_index = (_current_pair_index + 1) % len(all_pairs)
+    current_pair = all_pairs[_current_pair_index]
+    
+    parser.feed(connection.makeRequest('/exchange/%s' % current_pair))
     parser.close()
     
     r = ScraperResults()
