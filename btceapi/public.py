@@ -34,7 +34,6 @@ class Trade(object):
     
     def __init__(self, **kwargs):
         for s in Trade.__slots__:
-            u = unicode(s)
             setattr(self, s, kwargs.get(s))
         
         if type(self.date) in (int, float, decimal.Decimal):
