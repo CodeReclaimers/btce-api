@@ -90,6 +90,16 @@ def validatePair(pair):
                 msg = "Unrecognized pair: %r -- did you mean %s?" % (pair, swapped_pair)
                 raise Exception(msg)
         raise Exception("Unrecognized pair: %r" % pair)
+    
+def validateOrder(pair, trade_type, rate, amount):
+    validatePair(pair)
+    if trade_type not in ("buy", "sell"):
+        raise Exception("Unrecognized trade type: %r" % trade_type)
+
+    minimum_amount = min_orders[pair]
+    formatted_min_amount = formatCurrency(minimum_amount, pair)
+    if amount < minimum_amount:
+        raise Exception("Trade amount too small; should be >= %s" % formatted_min_amount)
 
 def truncateAmountDigits(value, digits):
     quantum = exps[digits]

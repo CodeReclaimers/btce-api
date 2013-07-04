@@ -1,3 +1,4 @@
+import random
 import unittest
 from btceapi.common import *
 
@@ -38,7 +39,17 @@ class TestCommon(unittest.TestCase):
         for pair in all_pairs:
             validatePair(pair)
         self.assertRaises(Exception, validatePair, "not_a_real_pair")
-
+        
+    def test_validateOrder(self):
+        for pair in all_pairs:
+            t = random.choice(("buy", "sell"))
+            a = random.random()
+            validateOrder(pair, t, a, 0.1)
+        
+            t = random.choice(("buy", "sell"))
+            a = random.random()
+            self.assertRaises(Exception, validateOrder, pair, t, a, 0.09999)
+        
     def test_parseJSONResponse(self):
         json1 = """
                 {"asks":[[3.29551,0.5],[3.29584,5]],

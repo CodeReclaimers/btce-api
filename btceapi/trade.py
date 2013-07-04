@@ -244,10 +244,7 @@ class TradeAPI(object):
         return result
            
     def trade(self, pair, trade_type, rate, amount, connection = None):
-        common.validatePair(pair)
-        if trade_type not in ("buy", "sell"):
-            raise Exception("Unrecognized trade type: %r" % trade_type)
-       
+        common.validateOrder(pair, trade_type, rate, amount)
         params = {"method":"Trade",
                   "pair":pair,
                   "type":trade_type,
@@ -260,6 +257,3 @@ class TradeAPI(object):
         params = {"method":"CancelOrder", 
                   "order_id":order_id}
         return CancelOrderResult(self._post(params, connection))
-        
-        
-        
