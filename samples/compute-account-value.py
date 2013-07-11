@@ -28,7 +28,7 @@ for key in handler.getKeys():
         btc_total = 0
         for currency in btceapi.all_currencies:
             balance = getattr(r, "balance_" + currency)
-            if currency is "btc":
+            if currency == "btc":
                 print "\t%s balance: %s" % (currency.upper(), balance)
                 btc_total += balance
             else:
