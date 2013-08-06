@@ -66,6 +66,10 @@ class TestCommon(unittest.TestCase):
                                    decimal.Decimal("15.51461")])
         self.assertEqual(bids[1], [decimal.Decimal("3"),
                                    decimal.Decimal("27.5")])
+
+    def test_pair_identity(self):
+        self.assertEqual(set(max_digits.keys()), set(min_orders.keys()))
+        self.assertEqual(set(max_digits.keys()), set(all_pairs))
         
 if __name__ == '__main__':
     unittest.main()        
