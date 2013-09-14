@@ -18,19 +18,21 @@ class TestPublic(unittest.TestCase):
         self.assertEqual(t.tid, d.get("tid"))
         self.assertEqual(t.amount, d.get("amount"))
         assert type(t.date) is datetime.datetime
-        self.assertEqual(t.date, datetime.datetime(2013, 5, 17, 8, 48, 4, 878004))
+        test_date = datetime.datetime.fromtimestamp(1368805684.878004)
+        self.assertEqual(t.date, test_date)
 
         # check conversion of decimal dates
         d["date"] = decimal.Decimal("1368805684.878004")
         t = Trade(**d)
         assert type(t.date) is datetime.datetime
-        self.assertEqual(t.date, datetime.datetime(2013, 5, 17, 8, 48, 4, 878004))
+        self.assertEqual(t.date, test_date)
 
         # check conversion of integer dates
         d["date"] = 1368805684
+        test_date = datetime.datetime.fromtimestamp(1368805684)
         t = Trade(**d)
         assert type(t.date) is datetime.datetime
-        self.assertEqual(t.date, datetime.datetime(2013, 5, 17, 8, 48, 4, 0))
+        self.assertEqual(t.date, test_date)
         
         # check conversion of string dates with no fractional seconds
         d["date"] = "2013-05-17 08:48:04"
