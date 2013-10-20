@@ -15,7 +15,7 @@ class KeyHandler(object):
         '''The given file is assumed to be a text file with three lines
         (key, secret, nonce) per entry.'''
         if not resaveOnDeletion:
-            warnings.warn("The resavenDeletion argument to KeyHandler will default to True in future versions.")
+            warnings.warn("The resaveOnDeletion argument to KeyHandler will default to True in future versions.")
         self._keys = {}
         self.resaveOnDeletion = False
         self.filename = filename
@@ -29,23 +29,23 @@ class KeyHandler(object):
                 secret = f.readline().strip()
                 nonce = int(f.readline().strip())
                 self.addKey(key, secret, nonce)
-                
+
     def __del__(self):
         if self.resaveOnDeletion:
             self.save(self.filename)
-            
+
     @property
     def keys(self):
         return self._keys.keys()
-        
+
     def getKeys(self):
         return self._keys.keys()
-        
+
     def save(self, filename):
         f = open(filename, "wt")
         for k, data in self._keys.items():
             f.write("%s\n%s\n%d\n" % (k, data.secret, data.nonce))
-        
+
     def addKey(self, key, secret, next_nonce):
         self._keys[key] = KeyData(secret, next_nonce)
 
@@ -53,19 +53,19 @@ class KeyHandler(object):
         data = self._keys.get(key)
         if data is None:
             raise Exception("Key not found: %r" % key)
-        
+
         nonce = data.nonce
         data.nonce += 1
-       
+
         return nonce
 
     def getSecret(self, key):
         data = self._keys.get(key)
         if data is None:
             raise Exception("Key not found: %r" % key)
-        
+
         return data.secret
-        
+
     def setNextNonce(self, key, next_nonce):
         data = self._keys.get(key)
         if data is None:
