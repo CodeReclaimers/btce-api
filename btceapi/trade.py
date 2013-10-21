@@ -171,7 +171,12 @@ class TradeAPI(object):
                 # attempting to use the same key, this mechanism will
                 # eventually fail and the InvalidNonce will be emitted so that
                 # you'll end up here reading this comment. :)
-                expected, actual = map(int, err_message.split()[-2:])
+
+                # The assumption is that the invalid nonce message looks like
+                # "invalid nonce parameter; on key:4, you sent:3"
+                s = err_message.split(",")
+                expected = int(s[-2].split(":")[1])
+                actual = int(s[-1].split(":")[1])
                 if raiseIfInvalidNonce:
                     raise InvalidNonceException(method, expected, actual)
 
