@@ -2,20 +2,23 @@
 
 import warnings
 
+
 class KeyData(object):
     def __init__(self, secret, nonce):
         self.secret = secret
         self.nonce = nonce
 
+
 class KeyHandler(object):
     '''KeyHandler handles the tedious task of managing nonces associated
     with a BTC-e API key/secret pair.
     The getNextNonce method is threadsafe, all others are not.'''
-    def __init__(self, filename = None, resaveOnDeletion = True):
+    def __init__(self, filename=None, resaveOnDeletion=True):
         '''The given file is assumed to be a text file with three lines
         (key, secret, nonce) per entry.'''
         if not resaveOnDeletion:
-            warnings.warn("The resaveOnDeletion argument to KeyHandler will default to True in future versions.")
+            warnings.warn("The resaveOnDeletion argument to KeyHandler will"
+                          " default to True in future versions.")
         self._keys = {}
         self.resaveOnDeletion = False
         self.filename = filename
