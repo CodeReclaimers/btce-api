@@ -184,6 +184,10 @@ class TradeAPI(object):
                               " attempting to correct.")
                 self.handler.setNextNonce(self.key, expected + 1)
                 return self._post(params, connection, True)
+            elif "no orders" in err_message and method == "ActiveOrders":
+                # ActiveOrders returns failure if there are no orders;
+                # intercept this and return an empty dict.
+                return {}
 
             raise Exception("%s call failed with error: %s"
                             % (method, err_message))
@@ -239,10 +243,28 @@ class TradeAPI(object):
 
         return result
 
+    def activeOrders(self, pair=None, connection=None):
+
+        params = {"method": "ActiveOrders"}
+
+        if pair is not None:
+            common.validatePair(pair)
+            params["pair"] = pair
+
+        orders = self._post(params, connection)
+        result = []
+        for k, v in orders.items():
+            result.append(OrderItem(k, v))
+
+        return result
+
     def orderList(self, from_number=None, count_number=None,
                   from_id=None, end_id=None, order=None,
                   since=None, end=None, pair=None, active=None,
                   connection=None):
+
+        warnings.warn("OrderList will be removed from the server on "
+                      "December 1, 2013.")
 
         params = {"method": "OrderList"}
 
