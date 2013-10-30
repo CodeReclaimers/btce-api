@@ -1,6 +1,6 @@
 # Copyright (c) 2013 Alan McIntyre
 __version__ = "0.3.0"
-from public import getDepth, getTradeHistory
+from public import getDepth, getTradeHistory, getTradeFee
 from trade import TradeAPI
 from scraping import scrapeMainPage
 from keyhandler import KeyHandler
