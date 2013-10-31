@@ -24,6 +24,35 @@ def getTradeFee(pair, connection=None):
 
     return trade_fee
 
+
+class Ticker(object):
+    __slots__ = ('high', 'low', 'avg', 'vol', 'vol_cur', 'last', 'buy', 'sell',
+                 'updated', 'server_time')
+
+    def __init__(self, **kwargs):
+        for s in Ticker.__slots__:
+            setattr(self, s, kwargs.get(s))
+
+        self.updated = datetime.datetime.fromtimestamp(self.updated)
+        self.server_time = datetime.datetime.fromtimestamp(self.server_time)
+
+
+def getTicker(pair, connection=None):
+    '''Retrieve the ticker for the given pair.  Returns a Ticker instance.'''
+
+    common.validatePair(pair)
+
+    if connection is None:
+        connection = common.BTCEConnection()
+
+    response = connection.makeJSONRequest("/api/2/%s/ticker" % pair)
+
+    if type(response) is not dict:
+        raise Exception("The response is a %r, not a dict." % type(response))
+
+    return Ticker(**response[u'ticker'])
+
+
 def getDepth(pair, connection=None):
     '''Retrieve the depth for the given pair.  Returns a tuple (asks, bids);
     each of these is a list of (price, volume) tuples.'''
