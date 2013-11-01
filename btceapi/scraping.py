@@ -14,13 +14,13 @@ class BTCEScraper(HTMLParser):
         self.messageUser = None
         self.messageText = None
         self.messages = []
-        self.bitInstantReserves = None
-        self.aurumXchangeReserves = None
+        self.reserves24change = None
+        self.reservesALFAcashier = None
 
         self.inMessageA = False
         self.inMessageSpan = False
-        self.inBitInstantSpan = False
-        self.inAurumXchangeSpan = False
+        self.in24changeSpan = False
+        self.inALFAcashierSpan = False
 
     def handle_data(self, data):
         # Capture contents of <a> and <span> tags, which contain
@@ -29,10 +29,10 @@ class BTCEScraper(HTMLParser):
             self.messageUser = data.strip()
         elif self.inMessageSpan:
             self.messageText = data.strip()
-        elif self.inBitInstantSpan:
-            self.bitInstantReserves = int(data)
-        elif self.inAurumXchangeSpan:
-            self.aurumXchangeReserves = int(data)
+        elif self.in24changeSpan:
+            self.reserves24change = int(data)
+        elif self.inALFAcashierSpan:
+            self.reservesALFAcashier = int(data)
 
     def handle_starttag(self, tag, attrs):
         if tag == 'p':
@@ -77,11 +77,11 @@ class BTCEScraper(HTMLParser):
             else:
                 for k, v in attrs:
                     if k == 'id':
-                        if v == 'BI_reserve':
-                            self.inBitInstantSpan = True
+                        if v == '_24CH_reserve':
+                            self.in24changeSpan = True
                             return
-                        elif v == 'AXC_reserve':
-                            self.inAurumXchangeSpan = True
+                        elif v == 'ALFA_reserve':
+                            self.inALFAcashierSpan = True
                             return
 
     def handle_endtag(self, tag):
@@ -117,20 +117,20 @@ class BTCEScraper(HTMLParser):
             if self.messageId is not None:
                 self.inMessageSpan = False
 
-            if self.inBitInstantSpan:
-                self.inBitInstantSpan = False
+            if self.in24changeSpan:
+                self.in24changeSpan = False
 
-            if self.inAurumXchangeSpan:
-                self.inAurumXchangeSpan = False
+            if self.inALFAcashierSpan:
+                self.inALFAcashierSpan = False
 
 
 class ScraperResults(object):
-    __slots__ = ('messages', 'bitInstantReserves', 'aurumXchangeReserves')
+    __slots__ = ('messages', 'reserves24change', 'reservesALFAcashier')
 
     def __init__(self):
         self.messages = None
-        self.bitInstantReserves = None
-        self.aurumXchangeReserves = None
+        self.reserves24change = None
+        self.reservesALFAcashier = None
 
 
 _current_pair_index = 0
@@ -153,7 +153,7 @@ def scrapeMainPage(connection=None):
 
     r = ScraperResults()
     r.messages = parser.messages
-    r.bitInstantReserves = parser.bitInstantReserves
-    r.aurumXchangeReserves = parser.aurumXchangeReserves
+    r.reserves24change = parser.reserves24change
+    r.reservesALFAcashier = parser.reservesALFAcashier
 
     return r
