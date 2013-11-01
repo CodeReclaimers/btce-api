@@ -16,11 +16,14 @@ class BTCEScraper(HTMLParser):
         self.messages = []
         self.reserves24change = None
         self.reservesALFAcashier = None
+        self.usersOnline = None
+        self.botsOnline = None
 
         self.inMessageA = False
         self.inMessageSpan = False
         self.in24changeSpan = False
         self.inALFAcashierSpan = False
+        self.inUsersOnlineDiv = False
 
     def handle_data(self, data):
         # Capture contents of <a> and <span> tags, which contain
@@ -33,6 +36,11 @@ class BTCEScraper(HTMLParser):
             self.reserves24change = int(data)
         elif self.inALFAcashierSpan:
             self.reservesALFAcashier = int(data)
+        elif self.inUsersOnlineDiv:
+            utext, ucount, bottext, botcount = data.split()
+            self.usersOnline = int(ucount)
+            self.botsOnline = int(botcount)
+            self.inUsersOnlineDiv = False
 
     def handle_starttag(self, tag, attrs):
         if tag == 'p':
@@ -83,6 +91,10 @@ class BTCEScraper(HTMLParser):
                         elif v == 'ALFA_reserve':
                             self.inALFAcashierSpan = True
                             return
+        elif tag == 'div':
+            for k, v in attrs:
+                if k == 'id' and v == "users-online":
+                    self.inUsersOnlineDiv = True
 
     def handle_endtag(self, tag):
         if tag == 'p' and self.messageId is not None:
@@ -114,23 +126,21 @@ class BTCEScraper(HTMLParser):
         elif tag == 'a' and self.messageId is not None:
             self.inMessageA = False
         elif tag == 'span':
-            if self.messageId is not None:
-                self.inMessageSpan = False
-
-            if self.in24changeSpan:
-                self.in24changeSpan = False
-
-            if self.inALFAcashierSpan:
-                self.inALFAcashierSpan = False
+            self.inMessageSpan = False
+            self.in24changeSpan = False
+            self.inALFAcashierSpan = False
 
 
 class ScraperResults(object):
-    __slots__ = ('messages', 'reserves24change', 'reservesALFAcashier')
+    __slots__ = ('messages', 'reserves24change', 'reservesALFAcashier',
+                 'usersOnline', 'botsOnline')
 
     def __init__(self):
         self.messages = None
         self.reserves24change = None
         self.reservesALFAcashier = None
+        self.usersOnline = None
+        self.botsOnline = None
 
 
 _current_pair_index = 0
@@ -155,5 +165,7 @@ def scrapeMainPage(connection=None):
     r.messages = parser.messages
     r.reserves24change = parser.reserves24change
     r.reservesALFAcashier = parser.reservesALFAcashier
+    r.usersOnline = parser.usersOnline
+    r.botsOnline = parser.botsOnline
 
     return r
