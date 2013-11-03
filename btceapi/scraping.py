@@ -25,6 +25,10 @@ class BTCEScraper(HTMLParser):
         self.inALFAcashierSpan = False
         self.inUsersOnlineDiv = False
 
+        self.devOnline = False
+        self.supportOnline = False
+        self.adminOnline = False
+
     def handle_data(self, data):
         # Capture contents of <a> and <span> tags, which contain
         # the user ID and the message text, respectively.
@@ -60,25 +64,40 @@ class BTCEScraper(HTMLParser):
             # the tags being processed are not relevant.
             if messageId is not None:
                 self.messageId = messageId
-        elif tag == 'a' and self.messageId is not None:
-            # Check whether this <a> tag has class="chatmessage" and a
-            # time string in the title attribute; if not, it's not part
-            # of a message.
-            messageTime = None
-            for k, v in attrs:
-                if k == 'title':
-                    messageTime = v
-                if k == 'class' and v != 'chatmessage':
+        elif tag == 'a':
+            if self.messageId is not None:
+                # Check whether this <a> tag has class="chatmessage" and a
+                # time string in the title attribute; if not, it's not part
+                # of a message.
+                messageTime = None
+                for k, v in attrs:
+                    if k == 'title':
+                        messageTime = v
+                    if k == 'class' and v != 'chatmessage':
+                        return
+
+                if messageTime is None:
                     return
 
-            if messageTime is None:
-                return
+                # This appears to be a message <a> tag, so remember the message
+                # time and set the inMessageA flag so the tag's data can be
+                # captured in the handle_data method.
+                self.inMessageA = True
+                self.messageTime = messageTime
+            else:
+                for k, v in attrs:
+                    if k != 'href':
+                        continue
 
-            # This appears to be a message <a> tag, so remember the message
-            # time and set the inMessageA flag so the tag's data can be
-            # captured in the handle_data method.
-            self.inMessageA = True
-            self.messageTime = messageTime
+                    # If the <a> tag for dev/support/admin is present, then
+                    # they are online (otherwise nothing appears on the
+                    # page for them).
+                    if v == 'https://btc-e.com/profile/1':
+                        self.devOnline = True
+                    elif v == 'https://btc-e.com/profile/2':
+                        self.supportOnline = True
+                    elif v == 'https://btc-e.com/profile/3':
+                        self.adminOnline = True
         elif tag == 'span':
             if self.messageId is not None:
                 self.inMessageSpan = True
@@ -133,7 +152,8 @@ class BTCEScraper(HTMLParser):
 
 class ScraperResults(object):
     __slots__ = ('messages', 'reserves24change', 'reservesALFAcashier',
-                 'usersOnline', 'botsOnline')
+                 'usersOnline', 'botsOnline', 'devOnline', 'supportOnline',
+                 'adminOnline')
 
     def __init__(self):
         self.messages = None
@@ -141,6 +161,9 @@ class ScraperResults(object):
         self.reservesALFAcashier = None
         self.usersOnline = None
         self.botsOnline = None
+        self.devOnline = False
+        self.supportOnline = False
+        self.adminOnline = False
 
 
 _current_pair_index = 0
@@ -167,5 +190,8 @@ def scrapeMainPage(connection=None):
     r.reservesALFAcashier = parser.reservesALFAcashier
     r.usersOnline = parser.usersOnline
     r.botsOnline = parser.botsOnline
+    r.devOnline = parser.devOnline
+    r.supportOnline = parser.supportOnline
+    r.adminOnline = parser.adminOnline
 
     return r

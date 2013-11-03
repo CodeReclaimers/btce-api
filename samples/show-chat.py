@@ -11,3 +11,6 @@ print "24change reserves: %d USD" % mainPage.reserves24change
 print "ALFAcashier reserves: %d USD" % mainPage.reservesALFAcashier
 print "%d users online" % mainPage.usersOnline
 print "%d bots online" % mainPage.botsOnline
+print "dev online: %s" % ('yes' if mainPage.devOnline else 'no')
+print "support online: %s" % ('yes' if mainPage.supportOnline else 'no')
+print "admin online: %s" % ('yes' if mainPage.adminOnline else 'no')
