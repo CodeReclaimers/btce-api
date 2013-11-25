@@ -10,7 +10,7 @@ exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 btce_domain = "btc-e.com"
 
 all_currencies = ("btc", "usd", "rur", "ltc", "nmc", "eur", "nvc",
-                  "trc", "ppc", "ftc")
+                  "trc", "ppc", "ftc", "xpm")
 all_pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd",
              "ltc_rur", "ltc_eur", "nmc_btc", "nmc_usd", "nvc_btc",
              "nvc_usd", "usd_rur", "eur_usd", "trc_btc", "ppc_btc",
