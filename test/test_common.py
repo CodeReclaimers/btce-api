@@ -4,7 +4,7 @@ import unittest
 from btceapi.common import formatCurrency, formatCurrencyDigits, \
     truncateAmount, truncateAmountDigits, \
     validateOrder, validatePair, parseJSONResponse, \
-    all_pairs, max_digits, min_orders
+    all_pairs, all_currencies, max_digits, min_orders
 
 
 class TestCommon(unittest.TestCase):
@@ -83,6 +83,18 @@ class TestCommon(unittest.TestCase):
     def test_pair_identity(self):
         self.assertEqual(set(max_digits.keys()), set(min_orders.keys()))
         self.assertEqual(set(max_digits.keys()), set(all_pairs))
+
+    def test_currency_sets(self):
+        currencies_from_pairs = set()
+        for p in all_pairs:
+            c1, c2 = p.split("_")
+            currencies_from_pairs.add(c1)
+            currencies_from_pairs.add(c2)
+
+        assert currencies_from_pairs == all_currencies
+
+        assert set(all_pairs.keys()) == set(max_digits.keys())
+        assert set(all_pairs.keys()) == set(min_orders.keys())
 
 if __name__ == '__main__':
     unittest.main()
