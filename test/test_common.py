@@ -91,9 +91,7 @@ class TestCommon(unittest.TestCase):
             currencies_from_pairs.add(c1)
             currencies_from_pairs.add(c2)
 
-        assert currencies_from_pairs == set(all_currencies)
-        assert set(all_pairs) == set(max_digits.keys())
-        assert set(all_pairs) == set(min_orders.keys())
+        self.assertEqual(currencies_from_pairs, set(all_currencies))
 
 if __name__ == '__main__':
     unittest.main()
