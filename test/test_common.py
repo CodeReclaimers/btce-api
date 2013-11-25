@@ -91,10 +91,9 @@ class TestCommon(unittest.TestCase):
             currencies_from_pairs.add(c1)
             currencies_from_pairs.add(c2)
 
-        assert currencies_from_pairs == all_currencies
-
-        assert set(all_pairs.keys()) == set(max_digits.keys())
-        assert set(all_pairs.keys()) == set(min_orders.keys())
+        assert currencies_from_pairs == set(all_currencies)
+        assert set(all_pairs) == set(max_digits.keys())
+        assert set(all_pairs) == set(min_orders.keys())
 
 if __name__ == '__main__':
     unittest.main()
