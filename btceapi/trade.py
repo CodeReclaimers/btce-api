@@ -136,7 +136,7 @@ class TradeAPI(object):
         self.key = key
         self.handler = handler
 
-        if type(self.handler) is not keyhandler.KeyHandler:
+        if not isinstance(self.handler, keyhandler.KeyHandler):
             raise Exception("The handler argument must be a"
                             " keyhandler.KeyHandler")
 
