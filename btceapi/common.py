@@ -14,7 +14,7 @@ all_currencies = ("btc", "usd", "rur", "ltc", "nmc", "eur", "nvc",
 all_pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd",
              "ltc_rur", "ltc_eur", "nmc_btc", "nmc_usd", "nvc_btc",
              "nvc_usd", "usd_rur", "eur_usd", "trc_btc", "ppc_btc",
-             "ftc_btc", "xpm_btc")
+             "ppc_usd", "ftc_btc", "xpm_btc")
 
 max_digits = {"btc_usd": 3,
               "btc_rur": 5,
@@ -31,6 +31,7 @@ max_digits = {"btc_usd": 3,
               "eur_usd": 5,
               "trc_btc": 5,
               "ppc_btc": 5,
+              "ppc_usd": 3,
               "ftc_btc": 5,
               "xpm_btc": 5}
 
@@ -49,6 +50,7 @@ min_orders = {"btc_usd": decimal.Decimal("0.01"),
               "eur_usd": decimal.Decimal("0.1"),
               "trc_btc": decimal.Decimal("0.1"),
               "ppc_btc": decimal.Decimal("0.1"),
+              "ppc_usd": decimal.Decimal("0.1"),
               "ftc_btc": decimal.Decimal("0.1"),
               "xpm_btc": decimal.Decimal("0.1")}
 
