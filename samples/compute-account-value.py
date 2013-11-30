@@ -51,7 +51,11 @@ with btceapi.KeyHandler(key_file, resaveOnDeletion=True) as handler:
                 for o in orders:
                     c1, c2 = o.pair.split("_")
                     c2_equiv = o.amount * exchange_rates[o.pair]
-                    btc_equiv = c2_equiv / exchange_rates["btc_%s" % c2]
+                    if c2 == "btc":
+                        btc_equiv = c2_equiv
+                    else:
+                        btc_equiv = c2_equiv / exchange_rates["btc_%s" % c2]
+
                     btc_str = btceapi.formatCurrency(btc_equiv, pair)
                     print "\t\t%s %s %s @ %s (~%s BTC)" % (o.type, o.amount,
                                                            o.pair, o.rate,
