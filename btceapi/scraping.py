@@ -5,6 +5,7 @@ import datetime
 import warnings
 from btceapi.common import BTCEConnection, all_pairs
 
+
 class BTCEScraper(HTMLParser):
     def __init__(self):
         HTMLParser.__init__(self)
@@ -167,11 +168,10 @@ class ScraperResults(object):
 
 _current_pair_index = 0
 
+
 def scrapeMainPage(connection=None):
     if connection is None:
         connection = BTCEConnection()
-    if connection.cookie is None:
-        connection.getCookie()
 
     parser = BTCEScraper()
 
