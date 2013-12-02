@@ -105,7 +105,7 @@ class BTCEConnection:
 
         if with_cookie:
             if self.cookie is None:
-                getCookie()
+                self.getCookie()
 
             headers.update({"Cookie": self.cookie})
 
