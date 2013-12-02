@@ -4,7 +4,6 @@ import httplib
 import json
 import decimal
 import re
-import cookielib
 
 decimal.getcontext().rounding = decimal.ROUND_DOWN
 exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
@@ -83,7 +82,7 @@ class BTCEConnection:
         self.conn.close()
 
     def getCookie(self):
-        self.cookie = None
+        self.cookie = ""
 
         self.conn.request("GET", '/')
         response = self.conn.getresponse()
@@ -95,7 +94,7 @@ class BTCEConnection:
 
         match = BODY_COOKIE_RE.search(response.read())
         if match:
-            if self.cookie != None:
+            if self.cookie != "":
                 self.cookie += '; '
             self.cookie += "a=" + match.group(1)
 
@@ -104,7 +103,10 @@ class BTCEConnection:
         if extra_headers is not None:
             headers.update(extra_headers)
 
-        if with_cookie and self.cookie != None:
+        if with_cookie:
+            if self.cookie is None:
+                getCookie()
+
             headers.update({"Cookie": self.cookie})
 
         self.conn.request("POST", url, params, headers)
