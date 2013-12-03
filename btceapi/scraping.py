@@ -181,7 +181,9 @@ def scrapeMainPage(connection=None):
     _current_pair_index = (_current_pair_index + 1) % len(all_pairs)
     current_pair = all_pairs[_current_pair_index]
 
-    parser.feed(connection.makeRequest('/exchange/%s' % current_pair))
+    response = connection.makeRequest('/exchange/%s' % current_pair, with_cookie=True)
+
+    parser.feed(response)
     parser.close()
 
     r = ScraperResults()

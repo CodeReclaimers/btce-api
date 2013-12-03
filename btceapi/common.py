@@ -3,6 +3,7 @@
 import httplib
 import json
 import decimal
+import re
 
 decimal.getcontext().rounding = decimal.ROUND_DOWN
 exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
@@ -69,18 +70,44 @@ def parseJSONResponse(response):
 
     return r
 
+HEADER_COOKIE_RE = re.compile(r'__cfduid=([a-f0-9]{46})')
+BODY_COOKIE_RE = re.compile(r'document\.cookie="a=([a-f0-9]{32});path=/;";')
 
 class BTCEConnection:
     def __init__(self, timeout=30):
         self.conn = httplib.HTTPSConnection(btce_domain, timeout=timeout)
+        self.cookie = None
 
     def close(self):
         self.conn.close()
 
-    def makeRequest(self, url, extra_headers=None, params=""):
+    def getCookie(self):
+        self.cookie = ""
+
+        self.conn.request("GET", '/')
+        response = self.conn.getresponse()
+
+        setCookieHeader = response.getheader("Set-Cookie")
+        match = HEADER_COOKIE_RE.search(setCookieHeader)
+        if match:
+            self.cookie = "__cfduid=" + match.group(1)
+
+        match = BODY_COOKIE_RE.search(response.read())
+        if match:
+            if self.cookie != "":
+                self.cookie += '; '
+            self.cookie += "a=" + match.group(1)
+
+    def makeRequest(self, url, extra_headers=None, params="", with_cookie=False):
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         if extra_headers is not None:
             headers.update(extra_headers)
+
+        if with_cookie:
+            if self.cookie is None:
+                self.getCookie()
+
+            headers.update({"Cookie": self.cookie})
 
         self.conn.request("POST", url, params, headers)
         response = self.conn.getresponse().read()
