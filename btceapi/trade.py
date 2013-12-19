@@ -258,34 +258,6 @@ class TradeAPI(object):
 
         return result
 
-    def orderList(self, from_number=None, count_number=None,
-                  from_id=None, end_id=None, order=None,
-                  since=None, end=None, pair=None, active=None,
-                  connection=None):
-
-        warnings.warn("OrderList will be removed from the server on "
-                      "December 1, 2013.")
-
-        params = {"method": "OrderList"}
-
-        setHistoryParams(params, from_number, count_number, from_id, end_id,
-                         order, since, end)
-
-        if pair is not None:
-            common.validatePair(pair)
-            params["pair"] = pair
-        if active is not None:
-            if active not in (0, 1, True, False):
-                raise Exception("Unexpected active parameter: %r" % active)
-            params["active"] = int(active)
-
-        orders = self._post(params, connection)
-        result = []
-        for k, v in orders.items():
-            result.append(OrderItem(k, v))
-
-        return result
-
     def trade(self, pair, trade_type, rate, amount, connection=None):
         common.validateOrder(pair, trade_type, rate, amount)
         params = {"method": "Trade",
