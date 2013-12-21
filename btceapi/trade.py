@@ -68,7 +68,7 @@ class TradeHistoryItem(object):
 
 class OrderItem(object):
     '''A list of instances of this class will be returned by
-    a successful call to TradeAPI.orderList.'''
+    a successful call to TradeAPI.activeOrders.'''
 
     def __init__(self, order_id, info):
         self.order_id = int(order_id)
