@@ -15,7 +15,7 @@ for key in handler.getKeys():
 
     # NOTE: In future versions, the handler argument will be required.
     conn = btceapi.BTCEConnection()
-    t = btceapi.TradeAPI(key, handler=handler)
+    t = btceapi.TradeAPI(key, handler)
 
     try:
         r = t.getInfo(connection = conn)

@@ -7,14 +7,15 @@ spend your time chasing down wacky dependencies, it depends only on the
 following standard libraries that are "batteries included" with a Python 2.7
 installation: 
 
-    datetime, decimal, hashlib, hmac, HTMLParser, httplib, json, urllib, warnings
+    datetime, decimal, hashlib, hmac, HTMLParser, httplib, json, re, 
+    urllib, warnings
 
 Some of the samples use matplotlib and NumPy, and the tests use unittest
 (although I find it easier to run them with nose), but these are not used 
 in the library itself.
 
-NOTE: BTC-e is not affiliated with this project; this is a completely independent 
-implementation based on the API description.  Use at your own risk.
+NOTE: BTC-e is not affiliated with this project; this is a completely 
+independent implementation based on the API description.  Use at your own risk.
 
 If you find the library useful and would like to donate (and many thanks to 
 those that have donated!), please send some coins here:
@@ -30,6 +31,13 @@ information:
     (asks, bids); each of these is a list of (price, volume) tuples.  See the
     example usage in samples/show_depth.py.
 
+    getTicker(pair) - Retrieve the ticker information (high, low, avg, etc.)
+    for the given pair.  Returns a Ticker instance, which has members high, low,
+    avg, vol, vol_cur, last, buy, sell, updated, and server_time.
+
+    getTradeFee(pair) - Retrieve the fee (in percent) associated with trades
+    for a given pair.
+    
     getTradeHistory(pair) - Retrieve the trade history for the given pair.  
     Returns a list of Trade instances.  Each Trade instance has members 
     trade_type (either "bid" or "ask"), price, tid (transaction ID?), amount, 
@@ -41,16 +49,17 @@ information:
     currently visible on the main page, 'bitInstantReserves' (an integer value
     representing the current BitInstant reserves), and 'aurumXchangeReserves'
     (an integer value representing the current AurumXchange reserves).
+    
+All of the functions above also take an optional 'connection' argument, which
+should be an instance of BTCEConnection.  This will speed up multiple function
+calls, as a new connection will not have to be created for every all.   
 
 The TradeAPI class in the btceapi module accesses the trading API, and requires
-the key and secret values (found under "API Keys" on the Profile page).  The 
-constructor also takes an optional third argument (default value of 1) which 
-specifies the starting nonce; this is an integer value that is incremented
-on each subsequent API call.  While the TradeAPI object will take care of 
-incrementing this number during its lifetime, it is the user's responsibility 
-to remember this number (retrieved by the next_nonce method) before destroying 
-the TradeAPI object, and to provide it to the next TradeAPI instance that uses 
-the same key/secret.
+a KeyHandler object.  The KeyHandler manages your API key and secret values 
+(found under "API Keys" on the Profile page), stored in a text file. For 
+instructions on creating this text file, please see step 9 here:
+
+    https://github.com/alanmcintyre/btce-bot/wiki/Getting-started
 
 The following methods are available on a TradeAPI instance:
 
@@ -74,9 +83,9 @@ The following methods are available on a TradeAPI instance:
     following members: pair (such as "btc_usd"), type ("buy" or "sell"), 
     amount, rate, order_id, is_your_order, timestamp (a datetime object).
 
-    orderList - Retrieves a list of orders via the server OrderList method, and
-    returns a list of OrderItem objects, which have the following members: 
-    pair (such as "btc_usd"), type ("buy" or "sell"), amount, rate, 
+    activeOrders - Retrieves a list of orders via the server ActiveOrders 
+    method, and returns a list of OrderItem objects, which have the following
+    members:  pair (such as "btc_usd"), type ("buy" or "sell"), amount, rate, 
     timestamp_created (a datetime object) and status.
 
     trade - Place a trade order via the server Trade method, and return a 

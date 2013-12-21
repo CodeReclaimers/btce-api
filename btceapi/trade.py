@@ -124,15 +124,7 @@ def setHistoryParams(params, from_number, count_number, from_id, end_id,
 
 
 class TradeAPI(object):
-    def __init__(self, key, handler, secret=None, nonce=1):
-        if secret is not None:
-            warnings.warn("The 'secret' argument is no longer used and will"
-                          " be removed in a future version.")
-
-        if nonce is not 1:
-            warnings.warn("The 'nonce' argument is no longer used and will"
-                          " be removed in a future version.")
-
+    def __init__(self, key, handler):
         self.key = key
         self.handler = handler
 

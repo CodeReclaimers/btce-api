@@ -7,7 +7,9 @@ from btceapi import common
 
 
 def getTradeFee(pair, connection=None):
-    '''Retrieve the fee associated with trades for a given pair'''
+    '''
+    Retrieve the fee (in percent) associated with trades for a given pair.
+    '''
 
     common.validatePair(pair)
 
