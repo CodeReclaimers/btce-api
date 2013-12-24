@@ -38,6 +38,13 @@ class Ticker(object):
         self.updated = datetime.datetime.fromtimestamp(self.updated)
         self.server_time = datetime.datetime.fromtimestamp(self.server_time)
 
+    def __getstate__(self):
+        return dict((k, getattr(self, k)) for k in Ticker.__slots__)
+
+    def __setstate__(self, state):
+        for k, v in state.items():
+            setattr(self, k, v)
+
 
 def getTicker(pair, connection=None):
     '''Retrieve the ticker for the given pair.  Returns a Ticker instance.'''
@@ -95,6 +102,13 @@ class Trade(object):
             else:
                 self.date = datetime.datetime.strptime(self.date,
                                                        "%Y-%m-%d %H:%M:%S")
+
+    def __getstate__(self):
+        return dict((k, getattr(self, k)) for k in Trade.__slots__)
+
+    def __setstate__(self, state):
+        for k, v in state.items():
+            setattr(self, k, v)
 
 
 def getTradeHistory(pair, connection=None, count=None):

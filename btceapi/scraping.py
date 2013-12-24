@@ -165,6 +165,13 @@ class ScraperResults(object):
         self.supportOnline = False
         self.adminOnline = False
 
+    def __getstate__(self):
+        return dict((k, getattr(self, k)) for k in ScraperResults.__slots__)
+
+    def __setstate__(self, state):
+        for k, v in state.items():
+            setattr(self, k, v)
+
 
 _current_pair_index = 0
 
