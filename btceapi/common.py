@@ -37,8 +37,8 @@ max_digits = {"btc_usd": 3,
               "xpm_btc": 5}
 
 min_orders = {"btc_usd": decimal.Decimal("0.01"),
-              "btc_rur": decimal.Decimal("0.1"),
-              "btc_eur": decimal.Decimal("0.1"),
+              "btc_rur": decimal.Decimal("0.01"),
+              "btc_eur": decimal.Decimal("0.01"),
               "ltc_btc": decimal.Decimal("0.1"),
               "ltc_usd": decimal.Decimal("0.1"),
               "ltc_rur": decimal.Decimal("0.1"),
