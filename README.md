@@ -22,6 +22,7 @@ those that have donated!), please send some coins here:
 
     LTC LatrKXtfw66LQUURrxBzCE7cxFc9Sv8FWf
     BTC 16vnh6gwFYLGneBa8JUk7NaXpEt3Qojqs1
+    DOGE D5jNqRjwxhDZT4hkG8yoGkseP576smjyNx
 
 The following functions in the btceapi module access the public API and/or 
 scrape content from the main page, and do not require any user account 
