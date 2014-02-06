@@ -18,11 +18,11 @@ def getTradeFee(pair, connection=None):
 
     fees = connection.makeJSONRequest("/api/2/%s/fee" % pair)
     if type(fees) is not dict:
-        raise Exception("The response is not a dict.")
+        raise TypeError("The response is not a dict.")
 
     trade_fee = fees.get(u'trade')
     if type(trade_fee) is not decimal.Decimal:
-        raise Exception("The response does not contain a trade fee")
+        raise TypeError("The response does not contain a trade fee")
 
     return trade_fee
 
@@ -57,7 +57,7 @@ def getTicker(pair, connection=None):
     response = connection.makeJSONRequest("/api/2/%s/ticker" % pair)
 
     if type(response) is not dict:
-        raise Exception("The response is a %r, not a dict." % type(response))
+        raise TypeError("The response is a %r, not a dict." % type(response))
 
     return Ticker(**response[u'ticker'])
 
@@ -73,15 +73,15 @@ def getDepth(pair, connection=None):
 
     depth = connection.makeJSONRequest("/api/2/%s/depth" % pair)
     if type(depth) is not dict:
-        raise Exception("The response is not a dict.")
+        raise TypeError("The response is not a dict.")
 
     asks = depth.get(u'asks')
     if type(asks) is not list:
-        raise Exception("The response does not contain an asks list.")
+        raise TypeError("The response does not contain an asks list.")
 
     bids = depth.get(u'bids')
     if type(bids) is not list:
-        raise Exception("The response does not contain a bids list.")
+        raise TypeError("The response does not contain a bids list.")
 
     return asks, bids
 
@@ -125,7 +125,7 @@ def getTradeHistory(pair, connection=None, count=None):
     history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
 
     if type(history) is not list:
-        raise Exception("The response is a %r, not a list." % type(history))
+        raise TypeError("The response is a %r, not a list." % type(history))
 
     result = []
 
