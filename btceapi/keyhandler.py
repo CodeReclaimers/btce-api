@@ -64,7 +64,7 @@ class KeyHandler(object):
     def getNextNonce(self, key):
         data = self._keys.get(key)
         if data is None:
-            raise Exception("Key not found: %r" % key)
+            raise KeyError("Key not found: %r" % key)
 
         nonce = data.nonce
         data.nonce += 1
@@ -74,12 +74,12 @@ class KeyHandler(object):
     def getSecret(self, key):
         data = self._keys.get(key)
         if data is None:
-            raise Exception("Key not found: %r" % key)
+            raise KeyError("Key not found: %r" % key)
 
         return data.secret
 
     def setNextNonce(self, key, next_nonce):
         data = self._keys.get(key)
         if data is None:
-            raise Exception("Key not found: %r" % key)
+            raise KeyError("Key not found: %r" % key)
         data.nonce = next_nonce

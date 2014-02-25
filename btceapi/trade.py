@@ -20,6 +20,9 @@ class InvalidNonceException(Exception):
     def __str__(self):
         return "Expected a nonce greater than %d" % self.expectedNonce
 
+class InvalidSortOrderException(Exception):
+    ''' Exception thrown when an invalid sort order is passed '''
+    pass
 
 class TradeAccountInfo(object):
     '''An instance of this class will be returned by
@@ -115,7 +118,7 @@ def setHistoryParams(params, from_number, count_number, from_id, end_id,
         params["end_id"] = "%d" % end_id
     if order is not None:
         if order not in ("ASC", "DESC"):
-            raise Exception("Unexpected order parameter: %r" % order)
+            raise InvalidSortOrderException("Unexpected order parameter: %r" % order)
         params["order"] = order
     if since is not None:
         params["since"] = "%d" % since
@@ -129,7 +132,7 @@ class TradeAPI(object):
         self.handler = handler
 
         if not isinstance(self.handler, keyhandler.KeyHandler):
-            raise Exception("The handler argument must be a"
+            raise TypeError("The handler argument must be a"
                             " keyhandler.KeyHandler")
 
         # We depend on the key handler for the secret
