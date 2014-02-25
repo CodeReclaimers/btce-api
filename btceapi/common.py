@@ -134,7 +134,7 @@ class BTCEConnection:
 def validatePair(pair):
     if pair not in all_pairs:
         if "_" in pair:
-            a, b = pair.split("_")
+            a, b = pair.split("_", 1)
             swapped_pair = "%s_%s" % (b, a)
             if swapped_pair in all_pairs:
                 msg = "Unrecognized pair: %r (did you mean %s?)"
