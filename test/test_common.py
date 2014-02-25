@@ -56,7 +56,7 @@ class TestCommon(unittest.TestCase):
 
             t = random.choice(("buy", "sell"))
             a = random.random()
-            if pair == "btc_usd":
+            if pair[:4] == "btc_":
                 self.assertRaises(Exception, validateOrder,
                                   pair, t, a, 0.009999)
             else:
