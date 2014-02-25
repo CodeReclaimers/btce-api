@@ -157,7 +157,11 @@ def validateOrder(pair, trade_type, rate, amount):
 
 def truncateAmountDigits(value, digits):
     quantum = exps[digits]
-    return decimal.Decimal(value).quantize(quantum)
+    if type(value) is float:
+        value = str(value)
+    if type(value) is str:
+        value = decimal.Decimal(value)
+    return value.quantize(quantum)
 
 
 def truncateAmount(value, pair):
