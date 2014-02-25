@@ -1,10 +1,7 @@
 import decimal
 import random
 import unittest
-from btceapi.common import formatCurrency, formatCurrencyDigits, \
-    truncateAmount, truncateAmountDigits, \
-    validateOrder, validatePair, parseJSONResponse, \
-    all_pairs, all_currencies, max_digits, min_orders
+from btceapi.common import *
 
 
 class TestCommon(unittest.TestCase):
@@ -43,25 +40,35 @@ class TestCommon(unittest.TestCase):
     def test_validatePair(self):
         for pair in all_pairs:
             validatePair(pair)
-        self.assertRaises(Exception, validatePair, "not_a_real_pair")
+        self.assertRaises(InvalidTradePairException,
+                          validatePair, "not_a_real_pair")
 
     def test_validateOrder(self):
         for pair in all_pairs:
             t = random.choice(("buy", "sell"))
             a = random.random()
-            if pair == "btc_usd":
-                validateOrder(pair, t, a, 0.01)
+            if pair[4] == "btc":
+                validateOrder(pair, t, a, decimal.Decimal("0.01"))
             else:
-                validateOrder(pair, t, a, 0.1)
+                validateOrder(pair, t, a, decimal.Decimal("0.1"))
 
             t = random.choice(("buy", "sell"))
-            a = random.random()
+            a = decimal.Decimal(str(random.random()))
             if pair[:4] == "btc_":
-                self.assertRaises(Exception, validateOrder,
-                                  pair, t, a, 0.009999)
+                self.assertRaises(InvalidTradeAmountException,
+                                  validateOrder, pair, t, a,
+                                  decimal.Decimal("0.009999"))
             else:
-                self.assertRaises(Exception, validateOrder,
-                                  pair, t, a, 0.09999)
+                self.assertRaises(InvalidTradeAmountException,
+                                  validateOrder, pair, t, a,
+                                  decimal.Decimal("0.09999"))
+
+        self.assertRaises(InvalidTradePairException,
+                          validateOrder, "foo_bar", "buy",
+                          decimal.Decimal(1.0), decimal.Decimal(1.0))
+        self.assertRaises(InvalidTradeTypeException,
+                          validateOrder, "btc_usd", "foo",
+                          decimal.Decimal(1.0), decimal.Decimal(1.0))
 
     def test_parseJSONResponse(self):
         json1 = """
