@@ -65,10 +65,10 @@ class TestCommon(unittest.TestCase):
 
         self.assertRaises(InvalidTradePairException,
                           validateOrder, "foo_bar", "buy",
-                          decimal.Decimal(1.0), decimal.Decimal(1.0))
+                          decimal.Decimal("1.0"), decimal.Decimal("1.0"))
         self.assertRaises(InvalidTradeTypeException,
                           validateOrder, "btc_usd", "foo",
-                          decimal.Decimal(1.0), decimal.Decimal(1.0))
+                          decimal.Decimal("1.0"), decimal.Decimal("1.0"))
 
     def test_parseJSONResponse(self):
         json1 = """
