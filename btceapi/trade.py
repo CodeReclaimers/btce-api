@@ -231,10 +231,11 @@ class TradeAPI(object):
             common.validatePair(pair)
             params["pair"] = pair
 
-        orders = self._post(params, connection)
+        orders = list(self._post(params, connection).items())
+        orders.sort(reverse=order != "ASC")
         result = []
-        for k, v in orders.items():
-            result.append(TradeHistoryItem(k, v))
+        for k, v in orders:
+            result.append(TradeHistoryItem(int(k), v))
 
         return result
 
