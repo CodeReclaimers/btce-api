@@ -55,7 +55,7 @@ information:
     
 All of the functions above also take an optional 'connection' argument, which
 should be an instance of BTCEConnection.  This will speed up multiple function
-calls, as a new connection will not have to be created for every all.   
+calls, as a new connection will not have to be created for every call.   
 
 The TradeAPI class in the btceapi module accesses the trading API, and requires
 a KeyHandler object.  The KeyHandler manages your API key and secret values 
