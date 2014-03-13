@@ -122,9 +122,12 @@ class BTCEConnection:
             headers.update({"Cookie": self.cookie})
 
         self.conn.request("POST", url, params, headers)
-        response = self.conn.getresponse().read()
+        response = self.conn.getresponse()
 
-        return response
+        if response.status != 200:
+            raise httplib.HTTPException
+        else
+            return response.read()
 
     def makeJSONRequest(self, url, extra_headers=None, params=""):
         response = self.makeRequest(url, extra_headers, params)
