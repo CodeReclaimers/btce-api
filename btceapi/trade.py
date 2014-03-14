@@ -183,6 +183,10 @@ class TradeAPI(object):
                 # ActiveOrders returns failure if there are no orders;
                 # intercept this and return an empty dict.
                 return {}
+            elif "no trades" in err_message and method == "TradeHistory":
+                # TradeHistory returns failure if there are no trades;
+                # intercept this and return an empty dict.
+                return {}
 
             raise Exception("%s call failed with error: %s"
                             % (method, err_message))
