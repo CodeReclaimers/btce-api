@@ -126,7 +126,7 @@ class BTCEConnection:
 
         if response.status != 200:
             raise httplib.HTTPException
-        else
+        else:
             return response.read()
 
     def makeJSONRequest(self, url, extra_headers=None, params=""):
