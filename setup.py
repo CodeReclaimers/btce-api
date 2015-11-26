@@ -1,12 +1,16 @@
 #!/usr/bin/env python
-
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='btce-api',
-      version='0.3',
-      description='A library for the public and private APIs of BTC-e.com.',
-      author='Alan McIntyre',
-      author_email='alan.mcintyre@gmail.com',
-      url='https://github.com/alanmcintyre/btce-api',
-      packages=['btceapi'],
-     )
+    version='0.3',
+    author='CodeReclaimers, LLC',
+    author_email='alan@codereclaimers.com',
+    url='https://github.com/CodeReclaimers/btce-api',
+    license="MIT",
+    description='A library for the public and private APIs of the digital currency trading site BTC-e.com.',
+    packages=['btceapi'],
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Intended Audience :: Developers'
+    ]
+)
