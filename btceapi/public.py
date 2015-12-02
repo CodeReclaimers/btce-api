@@ -58,8 +58,13 @@ def getTicker(pair, connection=None):
 
     if type(response) is not dict:
         raise TypeError("The response is a %r, not a dict." % type(response))
+    elif u'error' in response:
+        print ("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair)) 
+        ticker = None
+    else:
+        ticker = Ticker(**response[u'ticker'])
 
-    return Ticker(**response[u'ticker'])
+    return ticker
 
 
 def getDepth(pair, connection=None):
