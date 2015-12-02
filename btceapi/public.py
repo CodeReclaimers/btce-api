@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Alan McIntyre
+# Copyright (c) 2013-2015 Alan McIntyre
 
 import datetime
 import decimal
@@ -7,9 +7,9 @@ from btceapi import common
 
 
 def getTradeFee(pair, connection=None):
-    '''
+    """
     Retrieve the fee (in percent) associated with trades for a given pair.
-    '''
+    """
 
     common.validatePair(pair)
 
@@ -47,7 +47,7 @@ class Ticker(object):
 
 
 def getTicker(pair, connection=None):
-    '''Retrieve the ticker for the given pair.  Returns a Ticker instance.'''
+    """Retrieve the ticker for the given pair.  Returns a Ticker instance."""
 
     common.validatePair(pair)
 
@@ -63,8 +63,8 @@ def getTicker(pair, connection=None):
 
 
 def getDepth(pair, connection=None):
-    '''Retrieve the depth for the given pair.  Returns a tuple (asks, bids);
-    each of these is a list of (price, volume) tuples.'''
+    """Retrieve the depth for the given pair.  Returns a tuple (asks, bids);
+    each of these is a list of (price, volume) tuples."""
 
     common.validatePair(pair)
 
@@ -112,10 +112,10 @@ class Trade(object):
 
 
 def getTradeHistory(pair, connection=None, count=None):
-    '''Retrieve the trade history for the given pair.  Returns a list of
+    """Retrieve the trade history for the given pair.  Returns a list of
     Trade instances.  If count is not None, it should be an integer, and
     specifies the number of items from the trade history that will be
-    processed and returned.'''
+    processed and returned."""
 
     common.validatePair(pair)
 

@@ -26,11 +26,11 @@ for key in handler.keys:
     try:
         # Get a list of orders for the given pair, and cancel the ones
         # with the correct order type.
-        orders = t.activeOrders(pair = pair)
+        orders = t.activeOrders(pair=pair)
         for o in orders:
             if o.type == order_type:
                 print "  Canceling %s %s order for %f @ %f" % (pair, order_type,
-                    o.amount, o.rate)
+                                                               o.amount, o.rate)
                 t.cancelOrder(o.order_id)
 
         if not orders:

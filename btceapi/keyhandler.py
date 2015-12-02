@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Alan McIntyre
+# Copyright (c) 2013-2015 Alan McIntyre
 
 import warnings
 

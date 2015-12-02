@@ -1,33 +1,38 @@
-# Copyright (c) 2013 Alan McIntyre
+# Copyright (c) 2013-2015 Alan McIntyre
 
+import decimal
 import httplib
 import json
-import decimal
 import re
 
+
 class InvalidTradePairException(Exception):
-    ''' Exception raised when an invalid pair is passed. '''
+    """ Exception raised when an invalid pair is passed. """
     pass
+
 
 class InvalidTradeTypeException(Exception):
-    ''' Exception raise when invalid trade type is passed. '''
+    """ Exception raise when invalid trade type is passed. """
     pass
 
+
 class InvalidTradeAmountException(Exception):
-    ''' Exception raised if trade amount is too much or too little. '''
+    """ Exception raised if trade amount is too much or too little. """
     pass
+
 
 decimal.getcontext().rounding = decimal.ROUND_DOWN
 exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 
 btce_domain = "btc-e.com"
 
-all_currencies = ("btc", "usd", "rur", "ltc", "nmc", "eur", "nvc",
-                  "trc", "ppc", "ftc", "xpm")
-all_pairs = ("btc_usd", "btc_rur", "btc_eur", "ltc_btc", "ltc_usd",
-             "ltc_rur", "ltc_eur", "nmc_btc", "nmc_usd", "nvc_btc",
-             "nvc_usd", "usd_rur", "eur_usd", "eur_rur", "trc_btc",
-             "ppc_btc", "ppc_usd", "ftc_btc", "xpm_btc")
+all_currencies = ("btc", "ltc", "nmc", "nvc", "ppc", "usd", "rur", "eur")
+all_pairs = ("btc_usd", "btc_rur", "btc_eur",
+             "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur",
+             "nmc_btc", "nmc_usd",
+             "nvc_btc", "nvc_usd",
+             "usd_rur", "eur_usd", "eur_rur",
+             "ppc_btc", "ppc_usd")
 
 max_digits = {"btc_usd": 3,
               "btc_rur": 5,
@@ -43,11 +48,8 @@ max_digits = {"btc_usd": 3,
               "usd_rur": 5,
               "eur_usd": 5,
               "eur_rur": 5,
-              "trc_btc": 5,
               "ppc_btc": 5,
-              "ppc_usd": 3,
-              "ftc_btc": 5,
-              "xpm_btc": 5}
+              "ppc_usd": 3}
 
 min_orders = {"btc_usd": decimal.Decimal("0.01"),
               "btc_rur": decimal.Decimal("0.01"),
@@ -63,11 +65,8 @@ min_orders = {"btc_usd": decimal.Decimal("0.01"),
               "usd_rur": decimal.Decimal("0.1"),
               "eur_usd": decimal.Decimal("0.1"),
               "eur_rur": decimal.Decimal("0.1"),
-              "trc_btc": decimal.Decimal("0.1"),
               "ppc_btc": decimal.Decimal("0.1"),
-              "ppc_usd": decimal.Decimal("0.1"),
-              "ftc_btc": decimal.Decimal("0.1"),
-              "xpm_btc": decimal.Decimal("0.1")}
+              "ppc_usd": decimal.Decimal("0.1")}
 
 
 def parseJSONResponse(response):
@@ -78,14 +77,16 @@ def parseJSONResponse(response):
         r = json.loads(response, parse_float=parse_decimal,
                        parse_int=parse_decimal)
     except Exception as e:
-        msg = "Error while attempting to parse JSON response:"\
+        msg = "Error while attempting to parse JSON response:" \
               " %s\nResponse:\n%r" % (e, response)
         raise Exception(msg)
 
     return r
 
+
 HEADER_COOKIE_RE = re.compile(r'__cfduid=([a-f0-9]{46})')
 BODY_COOKIE_RE = re.compile(r'document\.cookie="a=([a-f0-9]{32});path=/;";')
+
 
 class BTCEConnection:
     def __init__(self, timeout=30):

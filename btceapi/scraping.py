@@ -1,4 +1,4 @@
-# Copyright (c) 2013 Alan McIntyre
+# Copyright (c) 2013-2015 Alan McIntyre
 
 from HTMLParser import HTMLParser
 import datetime
@@ -14,16 +14,9 @@ class BTCEScraper(HTMLParser):
         self.messageUser = None
         self.messageText = None
         self.messages = []
-        self.reserves24change = None
-        self.reservesALFAcashier = None
-        self.usersOnline = None
-        self.botsOnline = None
 
         self.inMessageA = False
         self.inMessageSpan = False
-        self.in24changeSpan = False
-        self.inALFAcashierSpan = False
-        self.inUsersOnlineDiv = False
 
         self.devOnline = False
         self.supportOnline = False
@@ -36,15 +29,6 @@ class BTCEScraper(HTMLParser):
             self.messageUser = data.strip()
         elif self.inMessageSpan:
             self.messageText = data.strip()
-        elif self.in24changeSpan:
-            self.reserves24change = int(data)
-        elif self.inALFAcashierSpan:
-            self.reservesALFAcashier = int(data)
-        elif self.inUsersOnlineDiv:
-            utext, ucount, bottext, botcount = data.split()
-            self.usersOnline = int(ucount)
-            self.botsOnline = int(botcount)
-            self.inUsersOnlineDiv = False
 
     def handle_starttag(self, tag, attrs):
         if tag == 'p':
@@ -101,19 +85,6 @@ class BTCEScraper(HTMLParser):
         elif tag == 'span':
             if self.messageId is not None:
                 self.inMessageSpan = True
-            else:
-                for k, v in attrs:
-                    if k == 'id':
-                        if v == '_24CH_reserve':
-                            self.in24changeSpan = True
-                            return
-                        elif v == 'ALFA_reserve':
-                            self.inALFAcashierSpan = True
-                            return
-        elif tag == 'div':
-            for k, v in attrs:
-                if k == 'id' and v == "users-online":
-                    self.inUsersOnlineDiv = True
 
     def handle_endtag(self, tag):
         if tag == 'p' and self.messageId is not None:
@@ -146,21 +117,13 @@ class BTCEScraper(HTMLParser):
             self.inMessageA = False
         elif tag == 'span':
             self.inMessageSpan = False
-            self.in24changeSpan = False
-            self.inALFAcashierSpan = False
 
 
 class ScraperResults(object):
-    __slots__ = ('messages', 'reserves24change', 'reservesALFAcashier',
-                 'usersOnline', 'botsOnline', 'devOnline', 'supportOnline',
-                 'adminOnline')
+    __slots__ = ('messages', 'devOnline', 'supportOnline', 'adminOnline')
 
     def __init__(self):
         self.messages = None
-        self.reserves24change = None
-        self.reservesALFAcashier = None
-        self.usersOnline = None
-        self.botsOnline = None
         self.devOnline = False
         self.supportOnline = False
         self.adminOnline = False
@@ -196,10 +159,6 @@ def scrapeMainPage(connection=None):
 
     r = ScraperResults()
     r.messages = parser.messages
-    r.reserves24change = parser.reserves24change
-    r.reservesALFAcashier = parser.reservesALFAcashier
-    r.usersOnline = parser.usersOnline
-    r.botsOnline = parser.botsOnline
     r.devOnline = parser.devOnline
     r.supportOnline = parser.supportOnline
     r.adminOnline = parser.adminOnline

@@ -1,11 +1,10 @@
-# Copyright (c) 2013 Alan McIntyre
+# Copyright (c) 2013-2015 Alan McIntyre
 
 import urllib
 import hashlib
 import hmac
 import warnings
 from datetime import datetime
-
 from btceapi import common
 from btceapi import keyhandler
 
@@ -20,9 +19,11 @@ class InvalidNonceException(Exception):
     def __str__(self):
         return "Expected a nonce greater than %d" % self.expectedNonce
 
+
 class InvalidSortOrderException(Exception):
     ''' Exception thrown when an invalid sort order is passed '''
     pass
+
 
 class TradeAccountInfo(object):
     '''An instance of this class will be returned by

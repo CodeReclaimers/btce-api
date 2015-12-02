@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import sys
-
 import btceapi
 
 if len(sys.argv) < 2:
@@ -18,7 +17,7 @@ for key in handler.getKeys():
     t = btceapi.TradeAPI(key, handler)
 
     try:
-        r = t.getInfo(connection = conn)
+        r = t.getInfo(connection=conn)
 
         for currency in btceapi.all_currencies:
             balance = getattr(r, "balance_" + currency)
@@ -30,7 +29,7 @@ for key in handler.getKeys():
         print "\tItems in transaction history: %r" % r.transaction_count
         print "\tNumber of open orders: %r" % r.open_orders
         print "\topen orders:"
-        orders = t.activeOrders(connection = conn)
+        orders = t.activeOrders(connection=conn)
         if orders:
             for o in orders:
                 print "\t\torder id: %r" % o.order_id
@@ -47,4 +46,3 @@ for key in handler.getKeys():
     except Exception as e:
         print "  An error occurred: %s" % e
         raise e
-

@@ -24,9 +24,9 @@ class Chart(object):
 
         self.fig = plt.figure()
         self.axes = self.fig.add_subplot(111)
-        self.bid_line, = self.axes.plot(*zip(*self.bid), \
+        self.bid_line, = self.axes.plot(*zip(*self.bid),
                 linestyle='None', marker='o', color='red')
-        self.ask_line, = self.axes.plot(*zip(*self.ask), \
+        self.ask_line, = self.axes.plot(*zip(*self.ask),
                 linestyle='None', marker='o', color='green')
         
         self.fig.canvas.draw()

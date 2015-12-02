@@ -1,6 +1,5 @@
 #!/usr/bin/python
 import sys
-
 import btceapi
 
 if len(sys.argv) < 2:
@@ -18,7 +17,7 @@ with btceapi.KeyHandler(key_file, resaveOnDeletion=True) as handler:
         t = btceapi.TradeAPI(key, handler)
 
         try:
-            r = t.getInfo(connection = conn)
+            r = t.getInfo(connection=conn)
 
             exchange_rates = {}
             for pair in btceapi.all_pairs:
@@ -46,7 +45,7 @@ with btceapi.KeyHandler(key_file, resaveOnDeletion=True) as handler:
                     btc_total += btc_equiv
 
             print "\tCurrent value of open orders:"
-            orders = t.activeOrders(connection = conn)
+            orders = t.activeOrders(connection=conn)
             if orders:
                 for o in orders:
                     c1, c2 = o.pair.split("_")
@@ -56,7 +55,7 @@ with btceapi.KeyHandler(key_file, resaveOnDeletion=True) as handler:
                     else:
                         btc_equiv = c2_equiv / exchange_rates["btc_%s" % c2]
 
-                    btc_str = btceapi.formatCurrency(btc_equiv, pair)
+                    btc_str = btceapi.formatCurrency(btc_equiv, o.pair)
                     print "\t\t%s %s %s @ %s (~%s BTC)" % (o.type, o.amount,
                                                            o.pair, o.rate,
                                                            btc_str)
@@ -76,4 +75,3 @@ with btceapi.KeyHandler(key_file, resaveOnDeletion=True) as handler:
         except Exception as e:
             print "  An error occurred: %s" % e
             raise e
-
