@@ -192,9 +192,9 @@ def truncateAmount(value, pair):
 
 def formatCurrencyDigits(value, digits):
     s = str(truncateAmountDigits(value, digits))
-    dot = s.index(".")
-    while s[-1] == "0" and len(s) > dot + 2:
-        s = s[:-1]
+    s = s.rstrip("0")
+    if s[-1] == ".":
+        s = "%s0" % s
 
     return s
 
