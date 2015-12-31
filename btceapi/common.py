@@ -22,6 +22,12 @@ class InvalidTradeAmountException(Exception):
     pass
 
 
+class APIResponseError(Exception):
+    """ Exception raise if the API replies with an HTTP code
+    not in the 2xx range. """
+    pass
+
+
 decimal.getcontext().rounding = decimal.ROUND_DOWN
 exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 
@@ -146,7 +152,11 @@ class BTCEConnection:
 
         try:
             self.conn.request("POST", url, params, headers)
-            response = self.conn.getresponse().read()
+            response = self.conn.getresponse()
+
+            if response.status < 200 or response.status > 299:
+                msg = "API response error: %s".format(response.status)
+                raise APIResponseError(msg)
         except Exception:
             # reset connection so it doesn't stay in a weird state if we catch
             # the error in some other place
@@ -154,7 +164,7 @@ class BTCEConnection:
             self.setup_connection()
             raise
 
-        return response
+        return response.read()
 
     def makeJSONRequest(self, url, extra_headers=None, params=""):
         response = self.makeRequest(url, extra_headers, params)
