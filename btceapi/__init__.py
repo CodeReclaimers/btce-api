@@ -3,7 +3,7 @@
 from public import getDepth, getTicker, getTradeFee, getTradeHistory
 from trade import TradeAPI
 from scraping import scrapeMainPage
-from keyhandler import KeyHandler
+from keyhandler import AbstractKeyHandler, KeyHandler
 from common import all_currencies, all_pairs, max_digits, min_orders, \
     formatCurrency, formatCurrencyDigits, \
     truncateAmount, truncateAmountDigits, \
