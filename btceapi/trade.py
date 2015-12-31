@@ -132,8 +132,9 @@ class TradeAPI(object):
         self.key = key
         self.handler = handler
 
-        if not isinstance(self.handler, keyhandler.KeyHandler):
+        if not isinstance(self.handler, keyhandler.AbstractKeyHandler):
             raise TypeError("The handler argument must be a"
+                            " keyhandler.AbstractKeyHandler, such as"
                             " keyhandler.KeyHandler")
 
         # We depend on the key handler for the secret

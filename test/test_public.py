@@ -61,5 +61,6 @@ class TestPublic(unittest.TestCase):
         self.assertEqual(t.date,
                          datetime.datetime(2013, 5, 17, 8, 48, 4, 878004))
 
+
 if __name__ == '__main__':
     unittest.main()
