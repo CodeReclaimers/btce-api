@@ -33,13 +33,15 @@ exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 
 btce_domain = "btc-e.com"
 
-all_currencies = ("btc", "ltc", "nmc", "nvc", "ppc", "usd", "rur", "eur")
+all_currencies = ("btc", "ltc", "nmc", "nvc", "ppc", "dsh", "eth", "usd", "rur", "eur")
 all_pairs = ("btc_usd", "btc_rur", "btc_eur",
              "ltc_btc", "ltc_usd", "ltc_rur", "ltc_eur",
              "nmc_btc", "nmc_usd",
              "nvc_btc", "nvc_usd",
              "usd_rur", "eur_usd", "eur_rur",
-             "ppc_btc", "ppc_usd")
+             "ppc_btc", "ppc_usd",
+             "dsh_btc",
+             "eth_btc", "eth_usd", "eth_ltc")
 
 max_digits = {"btc_usd": 3,
               "btc_rur": 5,
@@ -56,7 +58,11 @@ max_digits = {"btc_usd": 3,
               "eur_usd": 5,
               "eur_rur": 5,
               "ppc_btc": 5,
-              "ppc_usd": 3}
+              "ppc_usd": 3,
+              "dsh_btc": 6,
+              "eth_btc": 5,
+              "eth_usd": 3,
+              "eth_ltc": 5}
 
 min_orders = {"btc_usd": decimal.Decimal("0.01"),
               "btc_rur": decimal.Decimal("0.01"),
@@ -73,7 +79,11 @@ min_orders = {"btc_usd": decimal.Decimal("0.01"),
               "eur_usd": decimal.Decimal("0.1"),
               "eur_rur": decimal.Decimal("0.1"),
               "ppc_btc": decimal.Decimal("0.1"),
-              "ppc_usd": decimal.Decimal("0.1")}
+              "ppc_usd": decimal.Decimal("0.1"),
+              "dsh_btc": decimal.Decimal("0.1"),
+              "eth_btc": decimal.Decimal("0.1"),
+              "eth_usd": decimal.Decimal("0.1"),
+              "eth_ltc": decimal.Decimal("0.1")}
 
 
 def parseJSONResponse(response):
