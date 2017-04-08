@@ -3,5 +3,9 @@ python:
   - "2.7"
   - "2.6"
 
-install: pip install nose
-script: nosetests
+install:
+    pip install nose coveralls coverage
+script:
+    nosetests --with-coverage --cover-package=neat
+after_success:
+    coveralls
