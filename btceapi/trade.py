@@ -23,13 +23,13 @@ class InvalidNonceException(Exception):
 
 
 class InvalidSortOrderException(Exception):
-    ''' Exception thrown when an invalid sort order is passed '''
+    """ Exception thrown when an invalid sort order is passed """
     pass
 
 
 class TradeAccountInfo(object):
-    '''An instance of this class will be returned by
-    a successful call to TradeAPI.getInfo.'''
+    """An instance of this class will be returned by
+    a successful call to TradeAPI.getInfo."""
 
     def __init__(self, info):
         funds = info.get(u'funds')
@@ -47,8 +47,8 @@ class TradeAccountInfo(object):
 
 
 class TransactionHistoryItem(object):
-    '''A list of instances of this class will be returned by
-    a successful call to TradeAPI.transHistory.'''
+    """A list of instances of this class will be returned by
+    a successful call to TradeAPI.transHistory."""
 
     def __init__(self, transaction_id, info):
         self.transaction_id = transaction_id
@@ -60,8 +60,8 @@ class TransactionHistoryItem(object):
 
 
 class TradeHistoryItem(object):
-    '''A list of instances of this class will be returned by
-    a successful call to TradeAPI.tradeHistory.'''
+    """A list of instances of this class will be returned by
+    a successful call to TradeAPI.tradeHistory."""
 
     def __init__(self, transaction_id, info):
         self.transaction_id = transaction_id
@@ -73,8 +73,8 @@ class TradeHistoryItem(object):
 
 
 class OrderItem(object):
-    '''A list of instances of this class will be returned by
-    a successful call to TradeAPI.activeOrders.'''
+    """A list of instances of this class will be returned by
+    a successful call to TradeAPI.activeOrders."""
 
     def __init__(self, order_id, info):
         self.order_id = int(order_id)
@@ -86,8 +86,8 @@ class OrderItem(object):
 
 
 class TradeResult(object):
-    '''An instance of this class will be returned by
-    a successful call to TradeAPI.trade.'''
+    """An instance of this class will be returned by
+    a successful call to TradeAPI.trade."""
 
     def __init__(self, info):
         self.received = info.get(u"received")
@@ -99,8 +99,8 @@ class TradeResult(object):
 
 
 class CancelOrderResult(object):
-    '''An instance of this class will be returned by
-    a successful call to TradeAPI.cancelOrder.'''
+    """An instance of this class will be returned by
+    a successful call to TradeAPI.cancelOrder."""
 
     def __init__(self, info):
         self.order_id = info.get(u"order_id")

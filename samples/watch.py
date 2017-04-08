@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import sys
-import time
 
-import wx
 import matplotlib
+import wx
+
 matplotlib.use("WXAgg")
 matplotlib.rcParams['toolbar'] = 'None'
 
@@ -25,16 +25,17 @@ class Chart(object):
         self.fig = plt.figure()
         self.axes = self.fig.add_subplot(111)
         self.bid_line, = self.axes.plot(*zip(*self.bid),
-                linestyle='None', marker='o', color='red')
+                                        linestyle='None', marker='o', color='red')
         self.ask_line, = self.axes.plot(*zip(*self.ask),
-                linestyle='None', marker='o', color='green')
-        
+                                        linestyle='None', marker='o', color='green')
+        self.axes.grid()
+
         self.fig.canvas.draw()
 
         self.timer_id = wx.NewId()
         self.actor = self.fig.canvas.manager.frame
         self.timer = wx.Timer(self.actor, id=self.timer_id)
-        self.timer.Start(10000) # update every 10 seconds
+        self.timer.Start(10000)  # update every 10 seconds
         wx.EVT_TIMER(self.actor, self.timer_id, self.update)
 
         pylab.show()
@@ -54,7 +55,7 @@ class Chart(object):
         for t in ticks:
             if t.tid > self.last_tid:
                 print "%s: %s %f at %s %f" % \
-                        (t.trade_type, self.base, t.amount, self.alt, t.price)
+                      (t.trade_type, self.base, t.amount, self.alt, t.price)
 
         self.last_tid = max([t.tid for t in ticks])
 
@@ -80,4 +81,3 @@ if __name__ == "__main__":
         pass
 
     chart = Chart(symbol)
-

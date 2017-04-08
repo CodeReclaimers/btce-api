@@ -1,6 +1,6 @@
-import decimal
 import random
 import unittest
+
 from btceapi.common import *
 from btceapi.public import APIInfo
 
@@ -109,7 +109,6 @@ class TestCommon(unittest.TestCase):
 
         self.assertEqual(len(info.currencies), len(set(info.currencies)))
         self.assertEqual(currencies_from_pairs, set(info.currencies))
-
 
 
 if __name__ == '__main__':

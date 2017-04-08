@@ -8,14 +8,13 @@ import decimal
 
 from btceapi import common
 
-
 PairInfoBase = namedtuple("PairInfoBase",
-                      ["decimal_places",
-                       "min_price",
-                       "max_price",
-                       "min_amount",
-                       "hidden",
-                       "fee"])
+                          ["decimal_places",
+                           "min_price",
+                           "max_price",
+                           "min_amount",
+                           "hidden",
+                           "fee"])
 
 
 class PairInfo(PairInfoBase):
@@ -42,9 +41,10 @@ class APIInfo(object):
         if self.connection is None:
             self.connection = common.BTCEConnection()
 
-        self.currencies = []
-        self.pair_names = []
-        self.pairs = {}
+        self.currencies = None
+        self.pair_names = None
+        self.pairs = None
+        self.server_time = None
 
         self.update()
 
@@ -117,7 +117,7 @@ def getTicker(pair, connection=None, info=None):
     if type(response) is not dict:
         raise TypeError("The response is a %r, not a dict." % type(response))
     elif u'error' in response:
-        print ("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair)) 
+        print ("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair))
         ticker = None
     else:
         ticker = Ticker(**response[pair])
@@ -125,11 +125,12 @@ def getTicker(pair, connection=None, info=None):
     return ticker
 
 
-def getDepth(pair, connection=None):
+def getDepth(pair, connection=None, info=None):
     """Retrieve the depth for the given pair.  Returns a tuple (asks, bids);
     each of these is a list of (price, volume) tuples."""
 
-    common.validatePair(pair)
+    if info is not None:
+        info.validate_pair(pair)
 
     if connection is None:
         connection = common.BTCEConnection()
@@ -161,10 +162,10 @@ class Trade(object):
         elif type(self.date) in (str, unicode):
             if "." in self.date:
                 self.date = datetime.strptime(self.date,
-                                                       "%Y-%m-%d %H:%M:%S.%f")
+                                              "%Y-%m-%d %H:%M:%S.%f")
             else:
                 self.date = datetime.strptime(self.date,
-                                                       "%Y-%m-%d %H:%M:%S")
+                                              "%Y-%m-%d %H:%M:%S")
 
     def __getstate__(self):
         return dict((k, getattr(self, k)) for k in Trade.__slots__)
@@ -174,13 +175,14 @@ class Trade(object):
             setattr(self, k, v)
 
 
-def getTradeHistory(pair, connection=None, count=None):
+def getTradeHistory(pair, connection=None, info=None, count=None):
     """Retrieve the trade history for the given pair.  Returns a list of
     Trade instances.  If count is not None, it should be an integer, and
     specifies the number of items from the trade history that will be
     processed and returned."""
 
-    common.validatePair(pair)
+    if info is not None:
+        info.validate_pair(pair)
 
     if connection is None:
         connection = common.BTCEConnection()

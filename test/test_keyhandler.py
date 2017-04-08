@@ -87,7 +87,6 @@ class TestAbstractKeyHandler(unittest.TestCase):
     def test_setNextNonce(self):
         self.assertEqual(self._handler_with_keys().setNextNonce('k1', 82), 82)
 
-
     def _handler_with_keys(self):
         handler = DummyKeyHandler()
         return handler.addKey('k1', 'secret1', 3).addKey('k2', 'secret2', 28)

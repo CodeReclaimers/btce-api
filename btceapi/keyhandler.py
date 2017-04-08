@@ -4,7 +4,7 @@ import warnings
 
 
 class InvalidNonceException(Exception):
-    '''Exception raised when an invalid nonce is set on a key.'''
+    """Exception raised when an invalid nonce is set on a key."""
     pass
 
 
@@ -40,9 +40,9 @@ class KeyData(object):
 
 
 class AbstractKeyHandler(object):
-    '''AbstractKeyHandler handles the tedious task of managing nonces
+    """AbstractKeyHandler handles the tedious task of managing nonces
     associated with BTC-e API key/secret pairs.
-    The getNextNonce method is threadsafe, all others need not be.'''
+    The getNextNonce method is threadsafe, all others need not be."""
     def __init__(self):
         self._keys = {}
         self._loadKeys()
@@ -97,11 +97,11 @@ class AbstractKeyHandler(object):
 
 
 class KeyHandler(AbstractKeyHandler):
-    '''An implementation of AbstractKeyHandler using local files to store the
-    data.'''
+    """An implementation of AbstractKeyHandler using local files to store the
+    data."""
     def __init__(self, filename=None, resaveOnDeletion=True):
-        '''The given file is assumed to be a text file with three lines
-        (key, secret, nonce) per entry.'''
+        """The given file is assumed to be a text file with three lines
+        (key, secret, nonce) per entry."""
         if not resaveOnDeletion:
             warnings.warn("The resaveOnDeletion argument to KeyHandler will"
                           " default to True in future versions.")
@@ -119,9 +119,9 @@ class KeyHandler(AbstractKeyHandler):
             self._save()
 
     def _save(self):
-        with open(self.filename, 'wt') as file:
+        with open(self.filename, 'wt') as f:
             for k, data in self._keys.iteritems():
-                file.write("%s\n%s\n%d\n" % (k, data.secret, data.nonce))
+                f.write("%s\n%s\n%d\n" % (k, data.secret, data.nonce))
 
     def _parse(self):
         with open(self.filename, 'rt') as input_file:
