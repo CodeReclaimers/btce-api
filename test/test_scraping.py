@@ -1,5 +1,5 @@
-import decimal
 import unittest
+
 import btceapi
 
 

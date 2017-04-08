@@ -49,6 +49,11 @@ class TestCommon(unittest.TestCase):
         self.assertRaises(InvalidTradePairException,
                           info.validate_pair, "not_a_real_pair")
 
+    def test_validate_pair_suggest(self):
+        info = APIInfo()
+        self.assertRaises(InvalidTradePairException,
+                          info.validate_pair, "usd_btc")
+
     def test_validateOrder(self):
         info = APIInfo()
         for pair in info.pair_names:

@@ -136,10 +136,6 @@ def truncateAmountDigits(value, digits):
     return value.quantize(quantum)
 
 
-def truncateAmount(value, pair):
-    return truncateAmountDigits(value, max_digits[pair])
-
-
 def formatCurrencyDigits(value, digits):
     s = str(truncateAmountDigits(value, digits))
     s = s.rstrip("0")
@@ -147,7 +143,3 @@ def formatCurrencyDigits(value, digits):
         s = "%s0" % s
 
     return s
-
-
-def formatCurrency(value, pair):
-    return formatCurrencyDigits(value, max_digits[pair])
