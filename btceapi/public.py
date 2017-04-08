@@ -1,60 +1,118 @@
-# Copyright (c) 2013-2015 Alan McIntyre
+# Copyright (c) 2013-2017 CodeReclaimers, LLC
 
-import datetime
+# Public API v3 description: https://btc-e.com/api/3/documentation
+
+from collections import namedtuple
+from datetime import datetime
 import decimal
 
 from btceapi import common
 
 
-def getTradeFee(pair, connection=None):
-    """
-    Retrieve the fee (in percent) associated with trades for a given pair.
-    """
-
-    common.validatePair(pair)
-
-    if connection is None:
-        connection = common.BTCEConnection()
-
-    fees = connection.makeJSONRequest("/api/2/%s/fee" % pair)
-    if type(fees) is not dict:
-        raise TypeError("The response is not a dict.")
-
-    trade_fee = fees.get(u'trade')
-    if type(trade_fee) is not decimal.Decimal:
-        raise TypeError("The response does not contain a trade fee")
-
-    return trade_fee
+PairInfoBase = namedtuple("PairInfoBase",
+                      ["decimal_places",
+                       "min_price",
+                       "max_price",
+                       "min_amount",
+                       "hidden",
+                       "fee"])
 
 
-class Ticker(object):
-    __slots__ = ('high', 'low', 'avg', 'vol', 'vol_cur', 'last', 'buy', 'sell',
-                 'updated', 'server_time')
+class PairInfo(PairInfoBase):
+    def format_currency(self, value):
+        return common.formatCurrencyDigits(value, self.decimal_places)
 
-    def __init__(self, **kwargs):
-        for s in Ticker.__slots__:
-            setattr(self, s, kwargs.get(s))
+    def truncate_amount(self, value):
+        return common.truncateAmountDigits(value, self.decimal_places)
 
-        self.updated = datetime.datetime.fromtimestamp(self.updated)
-        self.server_time = datetime.datetime.fromtimestamp(self.server_time)
+    def validate_order(self, trade_type, rate, amount):
+        if trade_type not in ("buy", "sell"):
+            raise common.InvalidTradeTypeException("Unrecognized trade type: %r" % trade_type)
 
-    def __getstate__(self):
-        return dict((k, getattr(self, k)) for k in Ticker.__slots__)
+        formatted_min_amount = self.format_currency(self.min_amount)
+        if amount < self.min_amount:
+            msg = "Trade amount %r too small; should be >= %s" % \
+                  (amount, formatted_min_amount)
+            raise common.InvalidTradeAmountException(msg)
 
-    def __setstate__(self, state):
-        for k, v in state.items():
-            setattr(self, k, v)
+
+class APIInfo(object):
+    def __init__(self, connection=None):
+        self.connection = connection
+        if self.connection is None:
+            self.connection = common.BTCEConnection()
+
+        self.currencies = []
+        self.pair_names = []
+        self.pairs = {}
+
+        self.update()
+
+    def update(self):
+        info = self.connection.makeJSONRequest("/api/3/info")
+        if type(info) is not dict:
+            raise TypeError("The response is not a dict.")
+
+        self.server_time = info.get(u"server_time")
+
+        pairs = info.get(u"pairs")
+        if type(pairs) is not dict:
+            raise TypeError("The pairs item is not a dict.")
+
+        self.pairs = {}
+        currencies = set()
+        for name, data in pairs.items():
+            self.pairs[name] = PairInfo(**data)
+            a, b = name.split(u"_")
+            currencies.add(a)
+            currencies.add(b)
+
+        self.currencies = list(currencies)
+        self.currencies.sort()
+
+        self.pair_names = list(self.pairs.keys())
+        self.pair_names.sort()
+
+    def validate_pair(self, pair):
+        if pair not in self.pair_names:
+            if "_" in pair:
+                a, b = pair.split("_", 1)
+                swapped_pair = "%s_%s" % (b, a)
+                if swapped_pair in self.pair_names:
+                    msg = "Unrecognized pair: %r (did you mean %s?)"
+                    msg = msg % (pair, swapped_pair)
+                    raise common.InvalidTradePairException(msg)
+            raise common.InvalidTradePairException("Unrecognized pair: %r" % pair)
+
+    def validate_order(self, pair, trade_type, rate, amount):
+        self.validate_pair(pair)
+
+        pair_info = self.pairs[pair]
+        pair_info.validate_order(trade_type, rate, amount)
 
 
-def getTicker(pair, connection=None):
+Ticker = namedtuple("Ticker",
+                    ["high",
+                     "low",
+                     "avg",
+                     "vol",
+                     "vol_cur",
+                     "last",
+                     "buy",
+                     "sell",
+                     "updated"])
+
+
+def getTicker(pair, connection=None, info=None):
     """Retrieve the ticker for the given pair.  Returns a Ticker instance."""
 
-    common.validatePair(pair)
+    if info is not None:
+        info.validate_pair(pair)
 
     if connection is None:
         connection = common.BTCEConnection()
 
-    response = connection.makeJSONRequest("/api/2/%s/ticker" % pair)
+    response = connection.makeJSONRequest("/api/3/ticker/%s" % pair)
 
     if type(response) is not dict:
         raise TypeError("The response is a %r, not a dict." % type(response))
@@ -62,7 +120,7 @@ def getTicker(pair, connection=None):
         print ("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair)) 
         ticker = None
     else:
-        ticker = Ticker(**response[u'ticker'])
+        ticker = Ticker(**response[pair])
 
     return ticker
 
@@ -99,13 +157,13 @@ class Trade(object):
             setattr(self, s, kwargs.get(s))
 
         if type(self.date) in (int, float, decimal.Decimal):
-            self.date = datetime.datetime.fromtimestamp(self.date)
+            self.date = datetime.fromtimestamp(self.date)
         elif type(self.date) in (str, unicode):
             if "." in self.date:
-                self.date = datetime.datetime.strptime(self.date,
+                self.date = datetime.strptime(self.date,
                                                        "%Y-%m-%d %H:%M:%S.%f")
             else:
-                self.date = datetime.datetime.strptime(self.date,
+                self.date = datetime.strptime(self.date,
                                                        "%Y-%m-%d %H:%M:%S")
 
     def __getstate__(self):

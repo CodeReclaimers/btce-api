@@ -1,4 +1,6 @@
-# Copyright (c) 2013-2015 Alan McIntyre
+# Copyright (c) 2013-2017 CodeReclaimers, LLC
+
+# Trade API description: https://btc-e.com/api/documentation
 
 import urllib
 import hashlib

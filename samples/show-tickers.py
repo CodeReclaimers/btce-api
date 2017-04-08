@@ -2,11 +2,12 @@
 import btceapi
 
 attrs = ('high', 'low', 'avg', 'vol', 'vol_cur', 'last',
-         'buy', 'sell', 'updated', 'server_time')
+         'buy', 'sell', 'updated')
 
 print "Tickers:"
 connection = btceapi.BTCEConnection()
-for pair in btceapi.all_pairs:
+info = btceapi.APIInfo(connection)
+for pair in info.pair_names:
     ticker = btceapi.getTicker(pair, connection)
     print pair
     for a in attrs:

@@ -1,9 +1,9 @@
-# Copyright (c) 2013-2015 Alan McIntyre
+# Copyright (c) 2013-2017 CodeReclaimers, LLC
 
 from HTMLParser import HTMLParser
 import datetime
 import warnings
-from btceapi.common import BTCEConnection, all_pairs
+from btceapi.common import BTCEConnection
 
 
 class BTCEScraper(HTMLParser):

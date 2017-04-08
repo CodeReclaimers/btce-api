@@ -1,13 +1,9 @@
-# Copyright (c) 2013-2015 Alan McIntyre
+# Copyright (c) 2013-2017 CodeReclaimers, LLC
 
-from public import getDepth, getTicker, getTradeFee, getTradeHistory
+from public import APIInfo, getDepth, getTicker, getTradeHistory
 from trade import TradeAPI
 from scraping import scrapeMainPage
 from keyhandler import KeyHandler
-from common import all_currencies, all_pairs, max_digits, min_orders, \
-    formatCurrency, formatCurrencyDigits, \
-    truncateAmount, truncateAmountDigits, \
-    validatePair, validateOrder, \
-    BTCEConnection
+from common import formatCurrencyDigits, truncateAmountDigits, BTCEConnection
 
 __version__ = "0.3.1"
