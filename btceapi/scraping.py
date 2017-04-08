@@ -4,6 +4,7 @@ from HTMLParser import HTMLParser
 import datetime
 import warnings
 from btceapi.common import BTCEConnection
+from btceapi.public import APIInfo
 
 
 class BTCEScraper(HTMLParser):
@@ -32,15 +33,15 @@ class BTCEScraper(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if tag == 'p':
-            # Check whether this <p> tag has id="msgXXXXXX" and
-            # class="chatmessage"; if not, it doesn't contain a message.
+            # Check whether this <p> tag has id="msgXXXXXXXX" and
+            # class="chatmessage *"; if not, it doesn't contain a message.
             messageId = None
             for k, v in attrs:
                 if k == 'id':
                     if v[:3] != 'msg':
                         return
                     messageId = v
-                if k == 'class' and v != 'chatmessage':
+                if k == 'class' and 'chatmessage' not in v:
                     return
 
             # This appears to be a message <p> tag, so set the message ID.
@@ -139,17 +140,20 @@ class ScraperResults(object):
 _current_pair_index = 0
 
 
-def scrapeMainPage(connection=None):
+def scrapeMainPage(connection=None, info=None):
     if connection is None:
         connection = BTCEConnection()
+
+    if info is None:
+        info = APIInfo(connection)
 
     parser = BTCEScraper()
 
     # Rotate through the currency pairs between chat requests so that the
     # chat pane contents will update more often than every few minutes.
     global _current_pair_index
-    _current_pair_index = (_current_pair_index + 1) % len(all_pairs)
-    current_pair = all_pairs[_current_pair_index]
+    _current_pair_index = (_current_pair_index + 1) % len(info.pair_names)
+    current_pair = info.pair_names[_current_pair_index]
 
     response = connection.makeRequest('/exchange/%s' % current_pair,
                                       with_cookie=True)
