@@ -29,7 +29,7 @@ class APIResponseError(Exception):
 
 
 decimal.getcontext().rounding = decimal.ROUND_DOWN
-exps = [decimal.Decimal("1e-%d" % i) for i in range(16)]
+quanta = [decimal.Decimal("1e-%d" % i) for i in range(16)]
 
 btce_domain = "btc-e.com"
 
@@ -193,7 +193,7 @@ def validateOrder(pair, trade_type, rate, amount):
 
 
 def truncateAmountDigits(value, digits):
-    quantum = exps[digits]
+    quantum = quanta[int(digits)]
     if type(value) is float:
         value = str(value)
     if type(value) is str:
