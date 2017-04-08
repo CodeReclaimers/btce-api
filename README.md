@@ -1,7 +1,7 @@
 btce-api
 ========
 
-[![Build Status](https://travis-ci.org/codereclaimers/btce-api.png?branch=master)](https://travis-ci.org/codereclaimers/btce-api)
+[![Build Status](https://travis-ci.org/CodeReclaimers/btce-api.svg)](https://travis-ci.org/CodeReclaimers/btce-api)
 
 This library provides a wrapper (hopefully a convenient one) around the public
 and trading APIs of the BTC-e.com exchange site.  So that you don't have to 

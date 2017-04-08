@@ -111,5 +111,6 @@ class TestCommon(unittest.TestCase):
         self.assertEqual(currencies_from_pairs, set(info.currencies))
 
 
+
 if __name__ == '__main__':
     unittest.main()
