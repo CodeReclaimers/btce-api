@@ -112,7 +112,7 @@ class BTCEConnection:
 
         try:
             self.conn.request("POST", url, params, headers)
-            response = self.conn.getresponse().read()
+            response = self.conn.getresponse()
         except Exception:
             # reset connection so it doesn't stay in a weird state if we catch
             # the error in some other place
@@ -120,7 +120,10 @@ class BTCEConnection:
             self.setup_connection()
             raise
 
-        return response
+        if response.status != 200:
+            raise httplib.HTTPException
+        else:
+            return response.read()
 
     def makeJSONRequest(self, url, extra_headers=None, params=""):
         response = self.makeRequest(url, extra_headers, params)
