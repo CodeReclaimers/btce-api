@@ -135,9 +135,13 @@ def getDepth(pair, connection=None, info=None):
     if connection is None:
         connection = common.BTCEConnection()
 
-    depth = connection.makeJSONRequest("/api/2/%s/depth" % pair)
-    if type(depth) is not dict:
+    response = connection.makeJSONRequest("/api/3/depth/%s" % pair)
+    if type(response) is not dict:
         raise TypeError("The response is not a dict.")
+
+    depth = response.get(pair)
+    if type(depth) is not dict:
+        raise TypeError("The pair depth is not a dict.")
 
     asks = depth.get(u'asks')
     if type(asks) is not list:
@@ -150,29 +154,13 @@ def getDepth(pair, connection=None, info=None):
     return asks, bids
 
 
-class Trade(object):
-    __slots__ = ('pair', 'trade_type', 'price', 'tid', 'amount', 'date')
-
-    def __init__(self, **kwargs):
-        for s in Trade.__slots__:
-            setattr(self, s, kwargs.get(s))
-
-        if type(self.date) in (int, float, decimal.Decimal):
-            self.date = datetime.fromtimestamp(self.date)
-        elif type(self.date) in (str, unicode):
-            if "." in self.date:
-                self.date = datetime.strptime(self.date,
-                                              "%Y-%m-%d %H:%M:%S.%f")
-            else:
-                self.date = datetime.strptime(self.date,
-                                              "%Y-%m-%d %H:%M:%S")
-
-    def __getstate__(self):
-        return dict((k, getattr(self, k)) for k in Trade.__slots__)
-
-    def __setstate__(self, state):
-        for k, v in state.items():
-            setattr(self, k, v)
+Trade = namedtuple("Trade",
+                   ['pair',
+                    'type',
+                    'price',
+                    'tid',
+                    'amount',
+                    'timestamp'])
 
 
 def getTradeHistory(pair, connection=None, info=None, count=None):
@@ -187,8 +175,11 @@ def getTradeHistory(pair, connection=None, info=None, count=None):
     if connection is None:
         connection = common.BTCEConnection()
 
-    history = connection.makeJSONRequest("/api/2/%s/trades" % pair)
+    response = connection.makeJSONRequest("/api/3/trades/%s" % pair)
+    if type(response) is not dict:
+        raise TypeError("The response is not a dict.")
 
+    history = response.get(pair)
     if type(history) is not list:
         raise TypeError("The response is a %r, not a list." % type(history))
 

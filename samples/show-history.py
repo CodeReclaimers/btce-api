@@ -18,11 +18,11 @@ history = btceapi.getTradeHistory(pair)
 
 print len(history)
 
-pylab.plot([t.date for t in history if t.trade_type == u'ask'],
-           [t.price for t in history if t.trade_type == u'ask'], 'ro')
+pylab.plot([t.timestamp for t in history if t.type == u'ask'],
+           [t.price for t in history if t.type == u'ask'], 'ro')
 
-pylab.plot([t.date for t in history if t.trade_type == u'bid'],
-           [t.price for t in history if t.trade_type == u'bid'], 'go')
+pylab.plot([t.timestamp for t in history if t.type == u'bid'],
+           [t.price for t in history if t.type == u'bid'], 'go')
 
 pylab.grid()          
 pylab.show()
