@@ -1,10 +1,10 @@
-# Copyright (c) 2013-2015 Alan McIntyre
+# Copyright (c) 2013-2017 CodeReclaimers, LLC
 
 import decimal
 import httplib
 import json
-import re
 import os
+import re
 
 
 class InvalidTradePairException(Exception):
@@ -53,7 +53,7 @@ HEADER_COOKIE_RE = re.compile(r'__cfduid=([a-f0-9]{46})')
 BODY_COOKIE_RE = re.compile(r'document\.cookie="a=([a-f0-9]{32});path=/;";')
 
 
-class BTCEConnection:
+class BTCEConnection(object):
     def __init__(self, timeout=30):
         self.conn = None
         self.cookie = None

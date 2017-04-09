@@ -1,8 +1,9 @@
 # Copyright (c) 2013-2017 CodeReclaimers, LLC
 
-from HTMLParser import HTMLParser
 import datetime
 import warnings
+from HTMLParser import HTMLParser
+
 from btceapi.common import BTCEConnection
 from btceapi.public import APIInfo
 

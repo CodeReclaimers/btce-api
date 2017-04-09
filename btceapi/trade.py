@@ -2,11 +2,12 @@
 
 # Trade API description: https://btc-e.com/api/documentation
 
-import urllib
 import hashlib
 import hmac
+import urllib
 import warnings
 from datetime import datetime
+
 from btceapi import common
 from btceapi import keyhandler
 

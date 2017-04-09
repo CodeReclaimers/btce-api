@@ -3,8 +3,6 @@
 # Public API v3 description: https://btc-e.com/api/3/documentation
 
 from collections import namedtuple
-from datetime import datetime
-import decimal
 
 from btceapi import common
 
