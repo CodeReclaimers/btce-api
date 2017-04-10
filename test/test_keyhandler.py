@@ -51,7 +51,7 @@ class TestAbstractKeyHandler(unittest.TestCase):
 
     def test_keys(self):
         # incidentally tests addKey, too
-        self.assertEqual(self._handler_with_keys().keys, ['k2', 'k1'])
+        self.assertEqual(set(self._handler_with_keys().keys), {'k2', 'k1'})
 
     def test___del__(self):
         handler = DummyKeyHandler()
