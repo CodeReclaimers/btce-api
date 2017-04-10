@@ -10,7 +10,7 @@ class TestScraping(unittest.TestCase):
         mainPage = btceapi.scrapeMainPage()
         for message in mainPage.messages:
             msgId, user, time, text = message
-            self.assertIs(type(time), datetime)
+            assert type(time) is datetime
             if sys.version_info[0] == 2:
                 # python2.x
                 assert type(msgId) in (str, unicode)
