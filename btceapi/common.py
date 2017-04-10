@@ -1,10 +1,14 @@
 # Copyright (c) 2013-2017 CodeReclaimers, LLC
 
 import decimal
-import httplib
 import json
 import os
 import re
+
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
 
 
 class InvalidTradePairException(Exception):
@@ -39,6 +43,8 @@ def parseJSONResponse(response):
         return decimal.Decimal(var)
 
     try:
+        if type(response) is not str:
+            response = response.decode('utf-8')
         r = json.loads(response, parse_float=parse_decimal,
                        parse_int=parse_decimal)
     except Exception as e:
@@ -60,6 +66,9 @@ class BTCEConnection(object):
         self._timeout = timeout
         self.setup_connection()
 
+    def __del__(self):
+        self.close()
+
     def setup_connection(self):
         if "HTTPS_PROXY" in os.environ:
             match = re.search(r'http://([\w.]+):(\d+)', os.environ['HTTPS_PROXY'])
@@ -73,7 +82,9 @@ class BTCEConnection(object):
         self.cookie = None
 
     def close(self):
-        self.conn.close()
+        if self.conn is not None:
+            self.conn.close()
+            self.conn = None
 
     def getCookie(self):
         self.cookie = ""
@@ -88,12 +99,16 @@ class BTCEConnection(object):
             self.setup_connection()
             raise
 
-        setCookieHeader = response.getheader("Set-Cookie")
-        match = HEADER_COOKIE_RE.search(setCookieHeader)
+        set_cookie_header = response.getheader("Set-Cookie")
+        match = HEADER_COOKIE_RE.search(set_cookie_header)
         if match:
             self.cookie = "__cfduid=" + match.group(1)
 
-        match = BODY_COOKIE_RE.search(response.read())
+        cookie_body = response.read()
+        if type(cookie_body) is not str:
+            cookie_body = cookie_body.decode('utf-8')
+
+        match = BODY_COOKIE_RE.search(cookie_body)
         if match:
             if self.cookie != "":
                 self.cookie += '; '
@@ -131,11 +146,13 @@ class BTCEConnection(object):
 
 
 def truncateAmountDigits(value, digits):
-    quantum = quanta[int(digits)]
     if type(value) is float:
         value = str(value)
+
     if type(value) is str:
         value = decimal.Decimal(value)
+
+    quantum = quanta[int(digits)]
     return value.quantize(quantum)
 
 

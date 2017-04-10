@@ -2,7 +2,10 @@
 
 import datetime
 import warnings
-from HTMLParser import HTMLParser
+try:
+    from HTMLParser import HTMLParser
+except ImportError:
+    from html.parser import HTMLParser
 
 from btceapi.common import BTCEConnection
 from btceapi.public import APIInfo

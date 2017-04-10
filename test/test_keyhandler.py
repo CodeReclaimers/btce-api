@@ -51,7 +51,7 @@ class TestAbstractKeyHandler(unittest.TestCase):
 
     def test_keys(self):
         # incidentally tests addKey, too
-        self.assertEqual(set(self._handler_with_keys().keys), {'k2', 'k1'})
+        self.assertEqual(set(self._handler_with_keys().keys), set(('k2', 'k1')))
 
     def test___del__(self):
         handler = DummyKeyHandler()
@@ -101,9 +101,10 @@ class TestKeyHandler(unittest.TestCase):
 
         handler.close()
 
-        expected_content = 'k2\nsecret2\n28\nk1\nsecret1\n3\n'
+        allowed_content = ('k2\nsecret2\n28\nk1\nsecret1\n3\n',
+                           'k1\nsecret1\n3\nk2\nsecret2\n28\n')
         with open(filename) as saved_file:
-            self.assertEqual(saved_file.read(), expected_content)
+            self.assertTrue(saved_file.read() in allowed_content)
 
     def test_parse(self):
         _, filename = tempfile.mkstemp()
@@ -113,7 +114,7 @@ class TestKeyHandler(unittest.TestCase):
 
         handler = KeyHandler(filename=filename)
 
-        self.assertEqual(handler.keys, ['k2', 'k1'])
+        self.assertEqual(set(handler.keys), set(['k2', 'k1']))
 
 
 if __name__ == '__main__':

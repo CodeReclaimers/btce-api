@@ -120,7 +120,7 @@ class KeyHandler(AbstractKeyHandler):
 
     def _save(self):
         with open(self.filename, 'wt') as f:
-            for k, data in self._keys.iteritems():
+            for k, data in self._keys.items():
                 f.write("%s\n%s\n%d\n" % (k, data.secret, data.nonce))
 
     def _parse(self):

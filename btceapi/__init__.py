@@ -1,8 +1,9 @@
 # Copyright (c) 2013-2017 CodeReclaimers, LLC
 
-from public import APIInfo, getDepth, getTicker, getTradeHistory
-from trade import TradeAPI
-from scraping import scrapeMainPage
-from keyhandler import AbstractKeyHandler, KeyHandler
-from common import formatCurrencyDigits, truncateAmountDigits, BTCEConnection
-__version__ = "0.3.1"
+from .common import formatCurrencyDigits, truncateAmountDigits, BTCEConnection
+from .keyhandler import AbstractKeyHandler, KeyHandler
+from .public import APIInfo, getDepth, getTicker, getTradeHistory
+from .scraping import scrapeMainPage
+from .trade import TradeAPI
+
+__version__ = "0.9.0"

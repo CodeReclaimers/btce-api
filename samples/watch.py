@@ -42,11 +42,11 @@ class Chart(object):
 
     @property
     def bid(self):
-        return [(t.date, t.price) for t in self.ticks if t.trade_type == u'bid']
+        return [(t.timestamp, t.price) for t in self.ticks if t.type == u'bid']
 
     @property
     def ask(self):
-        return [(t.date, t.price) for t in self.ticks if t.trade_type == u'ask']
+        return [(t.timestamp, t.price) for t in self.ticks if t.type == u'ask']
 
     def update(self, event):
         ticks = btceapi.getTradeHistory(self.symbol)
@@ -54,8 +54,8 @@ class Chart(object):
 
         for t in ticks:
             if t.tid > self.last_tid:
-                print "%s: %s %f at %s %f" % \
-                      (t.trade_type, self.base, t.amount, self.alt, t.price)
+                print("%s: %s %f at %s %f" % \
+                      (t.type, self.base, t.amount, self.alt, t.price))
 
         self.last_tid = max([t.tid for t in ticks])
 
