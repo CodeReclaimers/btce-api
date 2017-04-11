@@ -1,6 +1,9 @@
 # Copyright (c) 2013-2017 CodeReclaimers, LLC
 
-from .common import formatCurrencyDigits, truncateAmountDigits, BTCEConnection
+from .common import formatCurrencyDigits, truncateAmountDigits, BTCEConnection, \
+    InvalidTradePairException, InvalidTradeTypeException, \
+    InvalidTradeAmountException, APIResponseError
+
 from .keyhandler import AbstractKeyHandler, KeyHandler
 from .public import APIInfo, getDepth, getTicker, getTradeHistory
 from .trade import TradeAPI

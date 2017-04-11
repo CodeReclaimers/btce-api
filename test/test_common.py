@@ -1,68 +1,69 @@
+import decimal
 import random
 import unittest
 
-from btceapi.common import *
-from btceapi.public import APIInfo
+import btceapi
+from btceapi.common import parseJSONResponse
 
 
 class TestCommon(unittest.TestCase):
     def setUp(self):
-        self.connection = BTCEConnection()
+        self.connection = btceapi.BTCEConnection()
 
     def tearDown(self):
         self.connection.close()
         self.connection = None
 
     def test_formatCurrency(self):
-        self.assertEqual(formatCurrencyDigits(1.123456789, 1), "1.1")
-        self.assertEqual(formatCurrencyDigits(1.123456789, 2), "1.12")
-        self.assertEqual(formatCurrencyDigits(1.123456789, 3), "1.123")
-        self.assertEqual(formatCurrencyDigits(1.123456789, 4), "1.1234")
-        self.assertEqual(formatCurrencyDigits(1.123456789, 5), "1.12345")
-        self.assertEqual(formatCurrencyDigits(1.123456789, 6), "1.123456")
-        self.assertEqual(formatCurrencyDigits(1.123456789, 7), "1.1234567")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 1), "1.1")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 2), "1.12")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 3), "1.123")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 4), "1.1234")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 5), "1.12345")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 6), "1.123456")
+        self.assertEqual(btceapi.formatCurrencyDigits(1.123456789, 7), "1.1234567")
 
         for i in range(2, 8):
             print(i)
-            self.assertEqual(formatCurrencyDigits(1.12, i), "1.12")
-            self.assertEqual(formatCurrencyDigits(44.0, i), "44.0")
+            self.assertEqual(btceapi.formatCurrencyDigits(1.12, i), "1.12")
+            self.assertEqual(btceapi.formatCurrencyDigits(44.0, i), "44.0")
 
     def test_formatCurrencyByPair(self):
-        info = APIInfo(self.connection)
+        info = btceapi.APIInfo(self.connection)
         for i in info.pairs.values():
             d = i.decimal_places
             self.assertEqual(i.format_currency(1.12),
-                             formatCurrencyDigits(1.12, d))
+                             btceapi.formatCurrencyDigits(1.12, d))
             self.assertEqual(i.format_currency(44.0),
-                             formatCurrencyDigits(44.0, d))
+                             btceapi.formatCurrencyDigits(44.0, d))
             self.assertEqual(i.truncate_amount(1.12),
-                             truncateAmountDigits(1.12, d))
+                             btceapi.truncateAmountDigits(1.12, d))
             self.assertEqual(i.truncate_amount(44.0),
-                             truncateAmountDigits(44.0, d))
+                             btceapi.truncateAmountDigits(44.0, d))
 
     def test_truncateAmount(self):
-        info = APIInfo(self.connection)
+        info = btceapi.APIInfo(self.connection)
         for i in info.pairs.values():
             d = i.decimal_places
             self.assertEqual(i.truncate_amount(1.12),
-                             truncateAmountDigits(1.12, d))
+                             btceapi.truncateAmountDigits(1.12, d))
             self.assertEqual(i.truncate_amount(44.0),
-                             truncateAmountDigits(44.0, d))
+                             btceapi.truncateAmountDigits(44.0, d))
 
     def test_validatePair(self):
-        info = APIInfo(self.connection)
+        info = btceapi.APIInfo(self.connection)
         for pair in info.pair_names:
             info.validate_pair(pair)
-        self.assertRaises(InvalidTradePairException,
+        self.assertRaises(btceapi.InvalidTradePairException,
                           info.validate_pair, "not_a_real_pair")
 
     def test_validate_pair_suggest(self):
-        info = APIInfo(self.connection)
-        self.assertRaises(InvalidTradePairException,
+        info = btceapi.APIInfo(self.connection)
+        self.assertRaises(btceapi.InvalidTradePairException,
                           info.validate_pair, "usd_btc")
 
     def test_validateOrder(self):
-        info = APIInfo(self.connection)
+        info = btceapi.APIInfo(self.connection)
         for pair in info.pair_names:
             t = random.choice(("buy", "sell"))
             a = random.random()
@@ -74,18 +75,18 @@ class TestCommon(unittest.TestCase):
             t = random.choice(("buy", "sell"))
             a = decimal.Decimal(str(random.random()))
             if pair[:4] == "btc_":
-                self.assertRaises(InvalidTradeAmountException,
+                self.assertRaises(btceapi.InvalidTradeAmountException,
                                   info.validate_order, pair, t, a,
                                   decimal.Decimal("0.0009999"))
             else:
-                self.assertRaises(InvalidTradeAmountException,
+                self.assertRaises(btceapi.InvalidTradeAmountException,
                                   info.validate_order, pair, t, a,
                                   decimal.Decimal("0.009999"))
 
-        self.assertRaises(InvalidTradePairException,
+        self.assertRaises(btceapi.InvalidTradePairException,
                           info.validate_order, "foo_bar", "buy",
                           decimal.Decimal("1.0"), decimal.Decimal("1.0"))
-        self.assertRaises(InvalidTradeTypeException,
+        self.assertRaises(btceapi.InvalidTradeTypeException,
                           info.validate_order, "btc_usd", "foo",
                           decimal.Decimal("1.0"), decimal.Decimal("1.0"))
 
@@ -107,13 +108,13 @@ class TestCommon(unittest.TestCase):
                                    decimal.Decimal("27.5")])
 
     def test_pair_identity(self):
-        info = APIInfo(self.connection)
+        info = btceapi.APIInfo(self.connection)
         self.assertEqual(len(info.pair_names), len(set(info.pair_names)))
         self.assertEqual(set(info.pairs.keys()), set(info.pair_names))
 
     def test_currency_sets(self):
         currencies_from_pairs = set()
-        info = APIInfo(self.connection)
+        info = btceapi.APIInfo(self.connection)
         for pair in info.pair_names:
             c1, c2 = pair.split("_")
             currencies_from_pairs.add(c1)

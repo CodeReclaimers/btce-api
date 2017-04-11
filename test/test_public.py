@@ -1,36 +1,35 @@
 import unittest
 
-from btceapi.common import BTCEConnection
-from btceapi.public import *
+import btceapi
 
 
 class TestPublic(unittest.TestCase):
     def test_getTicker(self):
-        connection = BTCEConnection()
-        info = APIInfo(connection)
+        connection = btceapi.BTCEConnection()
+        info = btceapi.APIInfo(connection)
         for pair in info.pair_names:
-            getTicker(pair, connection, info)
-            getTicker(pair, connection)
-            getTicker(pair, info=info)
-            getTicker(pair)
+            btceapi.getTicker(pair, connection, info)
+            btceapi.getTicker(pair, connection)
+            btceapi.getTicker(pair, info=info)
+            btceapi.getTicker(pair)
 
     def test_getHistory(self):
-        connection = BTCEConnection()
-        info = APIInfo(connection)
+        connection = btceapi.BTCEConnection()
+        info = btceapi.APIInfo(connection)
         for pair in info.pair_names:
-            getTradeHistory(pair, connection, info)
-            getTradeHistory(pair, connection)
-            getTradeHistory(pair, info=info)
-            getTradeHistory(pair)
+            btceapi.getTradeHistory(pair, connection, info)
+            btceapi.getTradeHistory(pair, connection)
+            btceapi.getTradeHistory(pair, info=info)
+            btceapi.getTradeHistory(pair)
 
     def test_getDepth(self):
-        connection = BTCEConnection()
-        info = APIInfo(connection)
+        connection = btceapi.BTCEConnection()
+        info = btceapi.APIInfo(connection)
         for pair in info.pair_names:
-            getDepth(pair, connection, info)
-            getDepth(pair, connection)
-            getDepth(pair, info=info)
-            getDepth(pair)
+            btceapi.getDepth(pair, connection, info)
+            btceapi.getDepth(pair, connection)
+            btceapi.getDepth(pair, info=info)
+            btceapi.getDepth(pair)
 
 
 if __name__ == '__main__':
