@@ -6,6 +6,13 @@ from btceapi.public import APIInfo
 
 
 class TestCommon(unittest.TestCase):
+    def setUp(self):
+        self.connection = BTCEConnection()
+
+    def tearDown(self):
+        self.connection.close()
+        self.connection = None
+
     def test_formatCurrency(self):
         self.assertEqual(formatCurrencyDigits(1.123456789, 1), "1.1")
         self.assertEqual(formatCurrencyDigits(1.123456789, 2), "1.12")
@@ -21,7 +28,7 @@ class TestCommon(unittest.TestCase):
             self.assertEqual(formatCurrencyDigits(44.0, i), "44.0")
 
     def test_formatCurrencyByPair(self):
-        info = APIInfo()
+        info = APIInfo(self.connection)
         for i in info.pairs.values():
             d = i.decimal_places
             self.assertEqual(i.format_currency(1.12),
@@ -34,7 +41,7 @@ class TestCommon(unittest.TestCase):
                              truncateAmountDigits(44.0, d))
 
     def test_truncateAmount(self):
-        info = APIInfo()
+        info = APIInfo(self.connection)
         for i in info.pairs.values():
             d = i.decimal_places
             self.assertEqual(i.truncate_amount(1.12),
@@ -43,19 +50,19 @@ class TestCommon(unittest.TestCase):
                              truncateAmountDigits(44.0, d))
 
     def test_validatePair(self):
-        info = APIInfo()
+        info = APIInfo(self.connection)
         for pair in info.pair_names:
             info.validate_pair(pair)
         self.assertRaises(InvalidTradePairException,
                           info.validate_pair, "not_a_real_pair")
 
     def test_validate_pair_suggest(self):
-        info = APIInfo()
+        info = APIInfo(self.connection)
         self.assertRaises(InvalidTradePairException,
                           info.validate_pair, "usd_btc")
 
     def test_validateOrder(self):
-        info = APIInfo()
+        info = APIInfo(self.connection)
         for pair in info.pair_names:
             t = random.choice(("buy", "sell"))
             a = random.random()
@@ -100,13 +107,13 @@ class TestCommon(unittest.TestCase):
                                    decimal.Decimal("27.5")])
 
     def test_pair_identity(self):
-        info = APIInfo()
+        info = APIInfo(self.connection)
         self.assertEqual(len(info.pair_names), len(set(info.pair_names)))
         self.assertEqual(set(info.pairs.keys()), set(info.pair_names))
 
     def test_currency_sets(self):
         currencies_from_pairs = set()
-        info = APIInfo()
+        info = APIInfo(self.connection)
         for pair in info.pair_names:
             c1, c2 = pair.split("_")
             currencies_from_pairs.add(c1)
