@@ -7,9 +7,6 @@ try:
 except ImportError:
     from html.parser import HTMLParser
 
-from btceapi.common import BTCEConnection
-from btceapi.public import APIInfo
-
 
 class BTCEScraper(HTMLParser):
     def __init__(self):
@@ -141,34 +138,3 @@ class ScraperResults(object):
             setattr(self, k, v)
 
 
-_current_pair_index = 0
-
-
-def scrapeMainPage(connection=None, info=None):
-    if connection is None:
-        connection = BTCEConnection()
-
-    if info is None:
-        info = APIInfo(connection)
-
-    parser = BTCEScraper()
-
-    # Rotate through the currency pairs between chat requests so that the
-    # chat pane contents will update more often than every few minutes.
-    global _current_pair_index
-    _current_pair_index = (_current_pair_index + 1) % len(info.pair_names)
-    current_pair = info.pair_names[_current_pair_index]
-
-    response = connection.makeRequest('/exchange/%s' % current_pair,
-                                      with_cookie=True)
-
-    parser.feed(parser.unescape(response.decode('utf-8')))
-    parser.close()
-
-    r = ScraperResults()
-    r.messages = parser.messages
-    r.devOnline = parser.devOnline
-    r.supportOnline = parser.supportOnline
-    r.adminOnline = parser.adminOnline
-
-    return r

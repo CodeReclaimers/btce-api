@@ -1,10 +1,8 @@
 # Copyright (c) 2013-2017 CodeReclaimers, LLC
 
-import warnings
-
 
 class InvalidNonceException(Exception):
-    """Exception raised when an invalid nonce is set on a key."""
+    """Raised when an invalid nonce is set on a key."""
     pass
 
 
@@ -49,18 +47,22 @@ class AbstractKeyHandler(object):
 
     @property
     def keys(self):
+        if self._keys is None:
+            raise Exception("Attempted to use a closed key handler.")
+
         return self._keys.keys()
 
-    def getKeys(self):
-        return self.keys
-
-    # Should load the keys with their secrets and nonces from the datastore
     def _loadKeys(self):
+        """ 
+        Load the keys with their secrets and nonces from the datastore. 
+        """
         raise NotImplementedError
 
-    # Should update the datastore with the latest data (newest nonces, and any
-    # keys that might have been added)
     def _updateDatastore(self):
+        """
+        Should update the datastore with the latest data (newest nonces, and any
+        keys that might have been added)
+        """
         raise NotImplementedError
 
     def __del__(self):
@@ -69,6 +71,10 @@ class AbstractKeyHandler(object):
     def close(self):
         self._updateDatastore()
 
+        # By convention, if _keys is None the object is considered
+        # closed and should not attempt to touch the underlying storage.
+        self._keys = None
+
     def __enter__(self):
         return self
 
@@ -76,6 +82,9 @@ class AbstractKeyHandler(object):
         self.close()
 
     def addKey(self, key, secret, next_nonce):
+        if self._keys is None:
+            raise Exception("Attempted to use a closed key handler.")
+
         self._keys[key] = KeyData(secret, next_nonce)
         return self
 
@@ -89,6 +98,9 @@ class AbstractKeyHandler(object):
         return self.getKey(key).setNonce(nextNonce)
 
     def getKey(self, key):
+        if self._keys is None:
+            raise Exception("Attempted to use a closed key handler.")
+
         data = self._keys.get(key)
         if data is None:
             raise KeyError("Key not found: %r" % key)
@@ -102,28 +114,28 @@ class KeyHandler(AbstractKeyHandler):
     def __init__(self, filename=None, resaveOnDeletion=True):
         """The given file is assumed to be a text file with three lines
         (key, secret, nonce) per entry."""
-        if not resaveOnDeletion:
-            warnings.warn("The resaveOnDeletion argument to KeyHandler will"
-                          " default to True in future versions.")
-
-        self.resaveOnDeletion = resaveOnDeletion
         self.filename = filename
+        self.resaveOnDeletion = resaveOnDeletion
         super(KeyHandler, self).__init__()
 
     def _loadKeys(self):
         if self.filename is not None:
-            self._parse()
+            self._load()
 
     def _updateDatastore(self):
         if self.resaveOnDeletion and self.filename is not None:
             self._save()
 
     def _save(self):
+        # Do nothing if the object has been closed.
+        if self._keys is None:
+            return
+
         with open(self.filename, 'wt') as f:
             for k, data in self._keys.items():
                 f.write("%s\n%s\n%d\n" % (k, data.secret, data.nonce))
 
-    def _parse(self):
+    def _load(self):
         with open(self.filename, 'rt') as input_file:
             while True:
                 key = input_file.readline().strip()

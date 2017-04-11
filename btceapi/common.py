@@ -69,6 +69,12 @@ class BTCEConnection(object):
     def __del__(self):
         self.close()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        self.close()
+
     def setup_connection(self):
         if "HTTPS_PROXY" in os.environ:
             match = re.search(r'http://([\w.]+):(\d+)', os.environ['HTTPS_PROXY'])
@@ -87,6 +93,9 @@ class BTCEConnection(object):
             self.conn = None
 
     def getCookie(self):
+        if self.conn is None:
+            raise Exception("Attempted to use a closed connection.")
+
         self.cookie = ""
 
         try:
@@ -115,6 +124,9 @@ class BTCEConnection(object):
             self.cookie += "a=" + match.group(1)
 
     def makeRequest(self, url, extra_headers=None, params="", with_cookie=False):
+        if self.conn is None:
+            raise Exception("Attempted to use a closed connection.")
+
         headers = {"Content-type": "application/x-www-form-urlencoded"}
         if extra_headers is not None:
             headers.update(extra_headers)

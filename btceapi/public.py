@@ -4,7 +4,7 @@
 
 from collections import namedtuple
 
-from btceapi import common
+from btceapi import common, scraping
 
 PairInfoBase = namedtuple("PairInfoBase",
                           ["decimal_places",
@@ -34,15 +34,14 @@ class PairInfo(PairInfoBase):
 
 
 class APIInfo(object):
-    def __init__(self, connection=None):
+    def __init__(self, connection):
         self.connection = connection
-        if self.connection is None:
-            self.connection = common.BTCEConnection()
-
         self.currencies = None
         self.pair_names = None
         self.pairs = None
         self.server_time = None
+
+        self._scrape_pair_index = 0
 
         self.update()
 
@@ -82,12 +81,42 @@ class APIInfo(object):
                     raise common.InvalidTradePairException(msg)
             raise common.InvalidTradePairException("Unrecognized pair: %r" % pair)
 
+    def get_pair_info(self, pair):
+        self.validate_pair(pair)
+        return self.pair_names[pair]
+
     def validate_order(self, pair, trade_type, rate, amount):
         self.validate_pair(pair)
 
         pair_info = self.pairs[pair]
         pair_info.validate_order(trade_type, rate, amount)
 
+    def format_currency(self, pair, amount):
+        self.validate_pair(pair)
+
+        pair_info = self.pairs[pair]
+        return pair_info.format_currency(amount)
+
+    def scrapeMainPage(self):
+        parser = scraping.BTCEScraper()
+
+        # Rotate through the currency pairs between chat requests so that the
+        # chat pane contents will update more often than every few minutes.
+        self._scrape_pair_index = (self._scrape_pair_index + 1) % len(self.pair_names)
+        current_pair = self.pair_names[self._scrape_pair_index]
+
+        response = self.connection.makeRequest('/exchange/%s' % current_pair, with_cookie=True)
+
+        parser.feed(parser.unescape(response.decode('utf-8')))
+        parser.close()
+
+        r = scraping.ScraperResults()
+        r.messages = parser.messages
+        r.devOnline = parser.devOnline
+        r.supportOnline = parser.supportOnline
+        r.adminOnline = parser.adminOnline
+
+        return r
 
 Ticker = namedtuple("Ticker",
                     ["high",
