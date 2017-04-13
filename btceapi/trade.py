@@ -12,7 +12,6 @@ try:
 except ImportError:
     from urllib.parse import urlencode
 
-from . import common
 from . import keyhandler
 from . import public
 

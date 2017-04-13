@@ -4,7 +4,7 @@
 
 from collections import namedtuple
 
-from btceapi import common, scraping
+from . import common, scraping
 
 PairInfoBase = namedtuple("PairInfoBase",
                           ["decimal_places",
