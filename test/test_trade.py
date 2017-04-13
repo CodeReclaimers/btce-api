@@ -3,6 +3,8 @@ import unittest
 
 import btceapi
 
+# TODO: Add tests that run against a local server.
+
 TEST_KEY_FILE = os.path.join(os.path.dirname(__file__), "test-keys.txt")
 
 if os.path.isfile(TEST_KEY_FILE):

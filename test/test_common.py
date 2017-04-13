@@ -5,6 +5,7 @@ import unittest
 import btceapi
 from btceapi.common import parseJSONResponse
 
+# TODO: Add test for using BTCEConnection with a proxy.
 
 class TestCommon(unittest.TestCase):
     def setUp(self):
@@ -106,6 +107,10 @@ class TestCommon(unittest.TestCase):
                                    decimal.Decimal("15.51461")])
         self.assertEqual(bids[1], [decimal.Decimal("3"),
                                    decimal.Decimal("27.5")])
+
+    def test_parseJSONResponse_fail(self):
+        json1 = """ \most /definitely *not ^json"""
+        self.assertRaises(Exception, parseJSONResponse, json1)
 
     def test_pair_identity(self):
         info = btceapi.APIInfo(self.connection)
