@@ -13,7 +13,7 @@ with btceapi.KeyHandler(key_file) as handler:
         print("No keys in key file.")
     else:
         for key in handler.keys:
-            print("Printing info for key %s" % key)
+            print("Printing info for key {}".format(key))
 
             with btceapi.BTCEConnection() as connection:
                 t = btceapi.TradeAPI(key, handler, connection)
@@ -24,28 +24,44 @@ with btceapi.KeyHandler(key_file) as handler:
                     currencies.sort()
                     for currency in currencies:
                         balance = r.funds[currency]
-                        print("\t%s balance: %s" % (currency.upper(), balance))
-                    print("\tInformation rights: %r" % r.info_rights)
-                    print("\tTrading rights: %r" % r.trade_rights)
-                    print("\tWithrawal rights: %r" % r.withdraw_rights)
-                    print("\tServer time: %r" % r.server_time)
-                    print("\tItems in transaction history: %r" % r.transaction_count)
-                    print("\tNumber of open orders: %r" % r.open_orders)
+                        print("\t{} balance: {}".format(currency.upper(), balance))
+                    print("\tInformation rights: {}".format(r.info_rights))
+                    print("\tTrading rights: {}".format(r.trade_rights))
+                    print("\tWithrawal rights: {}".format(r.withdraw_rights))
+                    print("\tServer time: {}".format(r.server_time))
+                    print("\tItems in transaction history: {}".format(r.transaction_count))
+                    print("\tNumber of open orders: {}".format(r.open_orders))
                     print("\topen orders:")
                     orders = t.activeOrders()
                     if orders:
                         for o in orders:
-                            print("\t\torder id: %r" % o.order_id)
-                            print("\t\t    type: %s" % o.type)
-                            print("\t\t    pair: %s" % o.pair)
-                            print("\t\t    rate: %s" % o.rate)
-                            print("\t\t  amount: %s" % o.amount)
-                            print("\t\t created: %r" % o.timestamp_created)
-                            print("\t\t  status: %r" % o.status)
+                            print("\t\torder id: {}".format(o.order_id))
+                            print("\t\t    type: {}".format(o.type))
+                            print("\t\t    pair: {}".format(o.pair))
+                            print("\t\t    rate: {}".format(o.rate))
+                            print("\t\t  amount: {}".format(o.amount))
+                            print("\t\t created: {}".format(o.timestamp_created))
+                            print("\t\t  status: {}".format(o.status))
                             print()
                     else:
                         print("\t\tno orders")
 
+                    print("\tTrade history:")
+                    trade_history = t.tradeHistory()
+                    if trade_history:
+                        for th in trade_history:
+                            print("\t\ttransaction_id: {}".format(th.transaction_id))
+                            print("\t\t          pair: {}".format(th.pair))
+                            print("\t\t          type: {}".format(th.type))
+                            print("\t\t        amount: {}".format(th.amount))
+                            print("\t\t          rate: {}".format(th.rate))
+                            print("\t\t      order_id: {}".format(th.order_id))
+                            print("\t\t is_your_order: {}".format(th.is_your_order))
+                            print("\t\t     timestamp: {}".format(th.timestamp))
+                            print()
+                    else:
+                        print("\t\tno items in trade history")
+
                 except Exception as e:
-                    print("  An error occurred: %s" % e)
+                    print("  An error occurred: {}".format(e))
                     raise e
