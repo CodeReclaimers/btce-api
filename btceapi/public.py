@@ -83,7 +83,7 @@ class APIInfo(object):
 
     def get_pair_info(self, pair):
         self.validate_pair(pair)
-        return self.pair_names[pair]
+        return self.pairs[pair]
 
     def validate_order(self, pair, trade_type, rate, amount):
         self.validate_pair(pair)

@@ -2,10 +2,10 @@
 
 # Trade API description: https://btc-e.com/api/documentation
 
+from collections import namedtuple
 import hashlib
 import hmac
 import warnings
-from datetime import datetime
 
 try:
     from urllib import urlencode
@@ -47,63 +47,24 @@ class TradeAccountInfo(object):
         self.trade_rights = (rights.get(u'trade') == 1)
 
 
-class TransactionHistoryItem(object):
-    """A list of instances of this class will be returned by
-    a successful call to TradeAPI.transHistory."""
-
-    def __init__(self, transaction_id, info):
-        self.transaction_id = transaction_id
-        items = ("type", "amount", "currency", "desc",
-                 "status", "timestamp")
-        for n in items:
-            setattr(self, n, info.get(n))
-        self.timestamp = datetime.fromtimestamp(self.timestamp)
+TransactionHistoryItem = namedtuple("TransactionHistoryItem",
+    ["transaction_id", "type", "amount", "currency", "desc", "status", "timestamp"])
 
 
-class TradeHistoryItem(object):
-    """A list of instances of this class will be returned by
-    a successful call to TradeAPI.tradeHistory."""
-
-    def __init__(self, transaction_id, info):
-        self.transaction_id = transaction_id
-        items = ("pair", "type", "amount", "rate", "order_id",
-                 "is_your_order", "timestamp")
-        for n in items:
-            setattr(self, n, info.get(n))
-        self.timestamp = datetime.fromtimestamp(self.timestamp)
+TradeHistoryItem = namedtuple("TradeHistoryItem",
+    ["transaction_id", "pair", "type", "amount", "rate", "order_id", "is_your_order", "timestamp"])
 
 
-class OrderItem(object):
-    """A list of instances of this class will be returned by
-    a successful call to TradeAPI.activeOrders."""
-
-    def __init__(self, order_id, info):
-        self.order_id = int(order_id)
-        vnames = ("pair", "type", "amount", "rate", "timestamp_created",
-                  "status")
-        for n in vnames:
-            setattr(self, n, info.get(n))
-        self.timestamp_created = datetime.fromtimestamp(self.timestamp_created)
+OrderItem = namedtuple("OrderItem",
+    ["order_id", "pair", "type", "amount", "rate", "timestamp_created", "status"])
 
 
-class TradeResult(object):
-    """An instance of this class will be returned by
-    a successful call to TradeAPI.trade."""
-
-    def __init__(self, info):
-        self.received = info.get(u"received")
-        self.remains = info.get(u"remains")
-        self.order_id = info.get(u"order_id")
-        self.funds = info.get(u'funds')
+TradeResult = namedtuple("TradeResult",
+    ["received", "remains", "order_id", "funds"])
 
 
-class CancelOrderResult(object):
-    """An instance of this class will be returned by
-    a successful call to TradeAPI.cancelOrder."""
-
-    def __init__(self, info):
-        self.order_id = info.get(u"order_id")
-        self.funds = info.get(u'funds')
+CancelOrderResult = namedtuple("CancelOrderResult",
+    ["order_id", "funds"])
 
 
 def setHistoryParams(params, from_number, count_number, from_id, end_id,
@@ -213,7 +174,7 @@ class TradeAPI(object):
         orders = self._post(params)
         result = []
         for k, v in orders.items():
-            result.append(TransactionHistoryItem(int(k), v))
+            result.append(TransactionHistoryItem(int(k), **v))
 
         # We have to sort items here because the API returns a dict
         if "ASC" == order:
@@ -240,7 +201,7 @@ class TradeAPI(object):
         orders.sort(reverse=order != "ASC")
         result = []
         for k, v in orders:
-            result.append(TradeHistoryItem(int(k), v))
+            result.append(TradeHistoryItem(int(k), **v))
 
         return result
 
@@ -255,7 +216,7 @@ class TradeAPI(object):
         orders = self._post(params)
         result = []
         for k, v in orders.items():
-            result.append(OrderItem(k, v))
+            result.append(OrderItem(int(k), **v))
 
         return result
 
@@ -265,12 +226,12 @@ class TradeAPI(object):
         params = {"method": "Trade",
                   "pair": pair,
                   "type": trade_type,
-                  "rate": pair_info.format_currency(pair, rate),
-                  "amount": pair_info.format_currency(pair, amount)}
+                  "rate": pair_info.format_currency(rate),
+                  "amount": pair_info.format_currency(amount)}
 
-        return TradeResult(self._post(params))
+        return TradeResult(**self._post(params))
 
     def cancelOrder(self, order_id):
         params = {"method": "CancelOrder",
                   "order_id": order_id}
-        return CancelOrderResult(self._post(params))
+        return CancelOrderResult(**self._post(params))
