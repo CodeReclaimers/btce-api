@@ -54,7 +54,7 @@ class Chart(object):
 
         for t in ticks:
             if t.tid > self.last_tid:
-                print("%s: %s %f at %s %f" % \
+                print("%s: %s %f at %s %f" %
                       (t.type, self.base, t.amount, self.alt, t.price))
 
         self.last_tid = max([t.tid for t in ticks])

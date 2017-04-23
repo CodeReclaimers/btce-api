@@ -26,6 +26,11 @@ class InvalidTradeAmountException(Exception):
     pass
 
 
+class InvalidTradePriceException(Exception):
+    """ Raised if trade price is too much or too little. """
+    pass
+
+
 class APIResponseError(Exception):
     """ Raised if the API replies with an HTTP code
     not in the 2xx range. """

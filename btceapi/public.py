@@ -7,12 +7,7 @@ from collections import namedtuple
 from . import common, scraping
 
 PairInfoBase = namedtuple("PairInfoBase",
-                          ["decimal_places",
-                           "min_price",
-                           "max_price",
-                           "min_amount",
-                           "hidden",
-                           "fee"])
+    ["decimal_places", "min_price", "max_price", "min_amount", "hidden", "fee"])
 
 
 class PairInfo(PairInfoBase):
@@ -25,6 +20,10 @@ class PairInfo(PairInfoBase):
     def validate_order(self, trade_type, rate, amount):
         if trade_type not in ("buy", "sell"):
             raise common.InvalidTradeTypeException("Unrecognized trade type: %r" % trade_type)
+
+        if rate < self.min_price or rate > self.max_price:
+            raise common.InvalidTradePriceException(
+                "Allowed price range is from %f to %f" % (self.min_price, self.max_price))
 
         formatted_min_amount = self.format_currency(self.min_amount)
         if amount < self.min_amount:
@@ -119,15 +118,7 @@ class APIInfo(object):
         return r
 
 Ticker = namedtuple("Ticker",
-                    ["high",
-                     "low",
-                     "avg",
-                     "vol",
-                     "vol_cur",
-                     "last",
-                     "buy",
-                     "sell",
-                     "updated"])
+    ["high", "low", "avg", "vol", "vol_cur", "last", "buy", "sell", "updated"])
 
 
 def getTicker(pair, connection=None, info=None):
@@ -144,7 +135,7 @@ def getTicker(pair, connection=None, info=None):
     if type(response) is not dict:
         raise TypeError("The response is a %r, not a dict." % type(response))
     elif u'error' in response:
-        print ("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair))
+        print("There is a error \"%s\" while obtaining ticker %s" % (response['error'], pair))
         ticker = None
     else:
         ticker = Ticker(**response[pair])
@@ -181,13 +172,7 @@ def getDepth(pair, connection=None, info=None):
     return asks, bids
 
 
-Trade = namedtuple("Trade",
-                   ['pair',
-                    'type',
-                    'price',
-                    'tid',
-                    'amount',
-                    'timestamp'])
+Trade = namedtuple("Trade", ['pair', 'type', 'price', 'tid', 'amount', 'timestamp'])
 
 
 def getTradeHistory(pair, connection=None, info=None, count=None):

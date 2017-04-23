@@ -7,6 +7,7 @@ from btceapi.common import parseJSONResponse
 
 # TODO: Add test for using BTCEConnection with a proxy.
 
+
 class TestCommon(unittest.TestCase):
     def setUp(self):
         self.connection = btceapi.BTCEConnection()
