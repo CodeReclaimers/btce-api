@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(name='btce-api',
-      version='0.3.1',
+      version='0.9',
       author='CodeReclaimers, LLC',
       author_email='alan@codereclaimers.com',
       url='https://github.com/CodeReclaimers/btce-api',
@@ -11,6 +11,14 @@ setup(name='btce-api',
       packages=['btceapi'],
       classifiers=[
           'Development Status :: 2 - Pre-Alpha',
-          'Intended Audience :: Developers'
+          'Intended Audience :: Developers',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: Implementation :: PyPy',
       ]
       )
