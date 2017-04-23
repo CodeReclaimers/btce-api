@@ -2,7 +2,7 @@
 
 from .common import formatCurrencyDigits, truncateAmountDigits, BTCEConnection, \
     InvalidTradePairException, InvalidTradeTypeException, \
-    InvalidTradeAmountException, APIResponseError
+    InvalidTradeAmountException, InvalidTradePriceException,  APIResponseError
 
 from .keyhandler import AbstractKeyHandler, KeyHandler
 from .public import APIInfo, getDepth, getTicker, getTradeHistory

@@ -1,5 +1,4 @@
 import decimal
-import random
 import unittest
 
 import btceapi
@@ -66,24 +65,22 @@ class TestCommon(unittest.TestCase):
 
     def test_validateOrder(self):
         info = btceapi.APIInfo(self.connection)
-        for pair in info.pair_names:
-            t = random.choice(("buy", "sell"))
-            a = random.random()
-            if pair[4] == "btc":
-                info.validate_order(pair, t, a, decimal.Decimal("0.001"))
-            else:
-                info.validate_order(pair, t, a, decimal.Decimal("0.1"))
+        for pair_name, pair_data in info.pairs.items():
+            for t in ("buy", "sell"):
+                info.validate_order(pair_name, t, pair_data.min_price, pair_data.min_amount)
+                info.validate_order(pair_name, t, pair_data.max_price, pair_data.min_amount)
 
-            t = random.choice(("buy", "sell"))
-            a = decimal.Decimal(str(random.random()))
-            if pair[:4] == "btc_":
                 self.assertRaises(btceapi.InvalidTradeAmountException,
-                                  info.validate_order, pair, t, a,
-                                  decimal.Decimal("0.0009999"))
-            else:
-                self.assertRaises(btceapi.InvalidTradeAmountException,
-                                  info.validate_order, pair, t, a,
-                                  decimal.Decimal("0.009999"))
+                                  info.validate_order, pair_name, t, pair_data.min_price,
+                                  pair_data.min_amount - decimal.Decimal("0.0001"))
+                self.assertRaises(btceapi.InvalidTradePriceException,
+                                  info.validate_order, pair_name, t,
+                                  pair_data.min_price - decimal.Decimal("0.0001"),
+                                  pair_data.min_amount)
+                self.assertRaises(btceapi.InvalidTradePriceException,
+                                  info.validate_order, pair_name, t,
+                                  pair_data.max_price + decimal.Decimal("0.0001"),
+                                  pair_data.min_amount)
 
         self.assertRaises(btceapi.InvalidTradePairException,
                           info.validate_order, "foo_bar", "buy",
