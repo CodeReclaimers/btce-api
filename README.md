@@ -4,7 +4,9 @@ btce-api
 [![Build Status](https://travis-ci.org/CodeReclaimers/btce-api.svg)](https://travis-ci.org/CodeReclaimers/btce-api)
 [![Coverage Status](https://coveralls.io/repos/github/CodeReclaimers/btce-api/badge.svg)](https://coveralls.io/github/CodeReclaimers/btce-api)
 
-NOTE: Due to the apparent closure of BTC-e, this repository is no longer being maintained.  If BTC-e returns, I may resume maintenance.
+NOTE: Due to the closure of BTC-e, this repository is no longer being maintained. 
+I am leaving it here in case some of the code proves useful for the development of 
+similar tools for other exchanges.
 
 This library provides a wrapper (hopefully a convenient one) around the public
 and trading APIs of the BTC-e.com exchange site.  So that you don't have to 
